@@ -3,25 +3,25 @@ python module for drawing concrete plan details.
 
 it aims to draw such a beam and columns at the end.
 
-![image](https://user-images.githubusercontent.com/8196112/55085621-97acb100-50c4-11e9-91e6-7afcf2d7dbbc.png)
+![image](https: // user - images.githubusercontent.com / 8196112 / 55085621 - 97acb100 - 50c4 - 11e9 - 91e6 - 7afcf2d7dbbc.png)
 
-![image](https://user-images.githubusercontent.com/8196112/55085845-f70ac100-50c4-11e9-98c4-05240751b4d5.png)
+![image](https: // user - images.githubusercontent.com / 8196112 / 55085845 - f70ac100 - 50c4 - 11e9 - 98c4 - 05240751b4d5.png)
 
 
 It includes BeamType class that itself includes number of Beams class.
 at present it can draw beamtype shape, beamsize text, dimension lines and axes lines.
 
-![image](https://user-images.githubusercontent.com/8196112/55086146-8617d900-50c5-11e9-9059-ee6c569f132d.png)
+![image](https://user-images.githubusercontent.com/8196112/55087377-a5b00100-50c7-11e9-99cf-55fe3eb8bae2.png)
 
 
-## Usage
+# Usage
 
 This example show how you can create BeamType and then export that to dxf file
 with ezdxf python package for example.
 export of this code shown at above.
 
 
-```
+```python
 import ezdxf
 
 from pyconcrete.beamtype import beamtype, beamtypedxf
@@ -35,7 +35,7 @@ bt1 = beamtype.BeamType(spans_len=[295, 540],
     stirrups_len=[None, [85, 85]],
     axes_name=[('A', 1), ('B', 1), ('C', 1)],
 )
-# return bt1
+
 
 bt2 = beamtype.BeamType(spans_len=[254, 620, 350],
                         beams_dimension=[(40, 40), (40, 45), (40, 50)],
@@ -70,3 +70,8 @@ new_dwg.saveas('/home/ebi/beamtype1.dxf')
 
 ```
 
+##output
+
+This is output at peresent, but I add scale parameter and styles to seems look better!
+
+![image](https: // user - images.githubusercontent.com / 8196112 / 55086146 - 8617d900 - 50c5 - 11e9 - 9059 - ee6c569f132d.png)
