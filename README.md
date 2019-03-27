@@ -3,9 +3,9 @@ python module for drawing concrete plan details.
 
 it aims to draw such a beam and columns at the end.
 
-![image](https: // user - images.githubusercontent.com / 8196112 / 55085621 - 97acb100 - 50c4 - 11e9 - 91e6 - 7afcf2d7dbbc.png)
+![image](https://user-images.githubusercontent.com/8196112/55085621-97acb100-50c4-11e9-91e6-7afcf2d7dbbc.png)
 
-![image](https: // user - images.githubusercontent.com / 8196112 / 55085845 - f70ac100 - 50c4 - 11e9 - 98c4 - 05240751b4d5.png)
+![image](https://user-images.githubusercontent.com/8196112/55085845-f70ac100-50c4-11e9-98c4-05240751b4d5.png)
 
 
 It includes BeamType class that itself includes number of Beams class.
@@ -74,4 +74,4 @@ new_dwg.saveas('/home/ebi/beamtype1.dxf')
 
 This is output at peresent, but I add scale parameter and styles to seems look better!
 
-![image](https: // user - images.githubusercontent.com / 8196112 / 55086146 - 8617d900 - 50c5 - 11e9 - 9059 - ee6c569f132d.png)
+![image](https://user-images.githubusercontent.com/8196112/55086146-8617d900-50c5-11e9-9059-ee6c569f132d.png)
