@@ -46,19 +46,45 @@ class BeamTypeDxf:
             ).set_pos(p, align='BOTTOM_CENTER')
 
     def add_dim_lines(self):
+        d = self.beamtype.base_dim - 8
         for pt in self.beamtype.axes_dim_points:
             self.block.add_aligned_dim(
                 pt[0],
                 pt[1],
-                self.beamtype.base_dim,
+                d,
                 dxfattribs={'color': 2, })
+
+    def add_top_main_rebar(self):
+        pts = self.beamtype.top_main_rebar_points
+        self.block.add_polyline2d(pts, dxfattribs={'color': 6})
+
+    def add_bot_main_rebar(self):
+        pts = self.beamtype.bot_main_rebar_points
+        self.block.add_polyline2d(pts, dxfattribs={'color': 6})
+
+    def add_axes_circle(self):
+        for pt in self.beamtype.center_of_axis_circle_points:
+            self.block.add_circle(center=pt, radius=10,
+                                  dxfattribs={'color': 2})
+
+    def add_axes_text(self):
+        texts = self.beamtype.axes_text
+        points = self.beamtype.center_of_axis_circle_points
+        for t, pt in zip(texts, points):
+            self.block.add_text(
+                t, dxfattribs={'color': 3, 'height': 8}  # constant
+            ).set_pos(pt, align='MIDDLE_CENTER')
 
     def to_dxf(self):
         self.add_top_polylines()
         self.add_bot_polylines()
         self.add_edges_polyline()
-        self.add_axes_polyline()
+        # self.add_axes_polyline()
         self.add_stirrups()
         self.add_texts_dimension()
         self.add_dim_lines()
+        self.add_top_main_rebar()
+        self.add_bot_main_rebar()
+        self.add_axes_circle()
+        self.add_axes_text()
         # self.add_axes_dim()

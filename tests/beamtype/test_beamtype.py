@@ -153,11 +153,6 @@ def test_stirrups_points(bt1, b1, b2):
     sp.append(b2.stirrup_points)
     assert bt1.stirrups_points == sp
 
-    # def test_top_main_rebar(bt1):
-    #     bt1_top = bt1
-    #     bt1_top.top_main_rebar = (3, 16)
-    #     assert bt1_top.top_main_rebar == (3, 16)
-
 
 def test_edges_polyline_points(bt1, b1, b2):
     epps = []
@@ -167,4 +162,29 @@ def test_edges_polyline_points(bt1, b1, b2):
 
 
 def test_top_main_rebar_points(bt1):
-    pass
+    tmrp = ((-16.5, -8),
+            (-16.5, -2),
+            (849, -2),
+            (849, -8))
+    assert bt1.top_main_rebar_points == tmrp
+
+
+def test_bot_main_rebar_points(bt1):
+    bmrp = ((-16.5, -32),
+            (-16.5, -38),
+            (849, -38),
+            (849, -32))
+    assert bt1.bot_main_rebar_points == bmrp
+
+
+def test_center_of_axis_circle_points(bt1):
+    coacps = ((0, 48), (295, 48), (835, 48))
+    assert bt1.center_of_axis_circle_points == coacps
+
+
+def test_axes_text(bt1):
+    at = ['A1', 'B1', 'C1']
+    assert bt1.axes_text == at
+
+
+# def test_scale(bt1):

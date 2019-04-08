@@ -1,23 +1,50 @@
-from dataclasses import dataclass, field
+# from dataclasses import dataclass, field
 import uuid
 
 from pyconcrete.beamtype import beam as b
 
 
-@dataclass
 class BeamType:
-    spans_len: list
-    beams_dimension: list
-    columns_width: dict
-    stirrups_len: list
-    axes_name: list
-    extend_edge_len: int = 50
-    base_dim: int = 38
-    top_main_rebars: dict = None
-    bot_main_rebars: dict = None
-    top_add_rebars: dict = None
-    bot_add_rebars: dict = None
-    uid: str = str(uuid.uuid4().int)
+
+    def __init__(self, spans_len: list,
+                 beams_dimension: list,
+                 columns_width: dict,
+                 stirrups_len: list,
+                 axes_name: list,
+                 extend_edge_len: int = 50,
+                 base_dim: int = 38,
+                 extend_main_rebar: int = 6,
+                 top_main_rebars: dict = None,
+                 bot_main_rebars: dict = None,
+                 top_add_rebars: dict = None,
+                 bot_add_rebars: dict = None,
+                 uid: str = None,
+                 ):
+        self.spans_len = spans_len
+        self.beams_dimension = beams_dimension
+        self.columns_width = columns_width
+        self.stirrups_len = stirrups_len
+        self.axes_name = axes_name
+        self.extend_edge_len = extend_edge_len
+        self.base_dim = base_dim
+        self.extend_main_rebar = extend_main_rebar
+        self.uid = str(uuid.uuid4().int)
+
+        # @dataclass
+        # class BeamType:
+        #     spans_len: list
+        #     beams_dimension: list
+        #     columns_width: dict
+        #     stirrups_len: list
+        #     axes_name: list
+        #     extend_edge_len: int = 50
+        #     base_dim: int = 38
+        #     extend_main_rebar: int = 6
+        #     top_main_rebars: dict = None
+        #     bot_main_rebars: dict = None
+        #     top_add_rebars: dict = None
+        #     bot_add_rebars: dict = None
+        #     uid: str = str(uuid.uuid4().int)
 
     def __len__(self):
         return len(self.spans_len)
@@ -42,9 +69,6 @@ class BeamType:
                 top=dict(left=top[0], right=top[1],),
             )
             stirrup_len = self.stirrups_len[i]
-            # if i == 0:
-            #     dx = 0
-            # else:
             dx = axes_dist[i]
             beam = b.Beam(length=length,
                           width=width,
@@ -98,7 +122,8 @@ class BeamType:
 
     @property
     def max_beams_height(self):
-        return max(self.beams_dimension[:][1])
+        beams_height = [i[1] for i in self.beams_dimension]
+        return max(beams_height)
 
     @property
     def center_of_beams_dist(self):
@@ -154,6 +179,47 @@ class BeamType:
         epps.append(b1.left_edge_polyline)
         epps.append(b2.right_edge_polyline)
         return epps
+
+    def __left_right_polylines_x(self):
+        p1, p2 = self.edges_polyline_points
+        x1 = p1[0][0]
+        x2 = p2[0][0]
+        return x1, x2
+
+    @property
+    def top_main_rebar_points(self):
+        self.main_rebar_dx = 6
+        self.main_rebar_dy = 2
+        x1, x2 = self.__left_right_polylines_x()
+        p1 = (x1 + self.main_rebar_dx, -self.main_rebar_dy - self.extend_main_rebar)
+        p2 = (x1 + self.main_rebar_dx, -self.main_rebar_dy)
+        p3 = (x2 - self.main_rebar_dx, -self.main_rebar_dy)
+        p4 = (x2 - self.main_rebar_dx, -self.main_rebar_dy - self.extend_main_rebar)
+        return p1, p2, p3, p4
+
+    @property
+    def bot_main_rebar_points(self):
+        self.main_rebar_dx = 6
+        self.main_rebar_dy = 2
+        max_height = self.max_beams_height
+        x1, x2 = self.__left_right_polylines_x()
+        y1 = -max_height + (self.main_rebar_dy + self.extend_main_rebar)
+        y2 = -max_height + self.main_rebar_dy
+        p1 = (x1 + self.main_rebar_dx, y1)
+        p2 = (x1 + self.main_rebar_dx, y2)
+        p3 = (x2 - self.main_rebar_dx, y2)
+        p4 = (x2 - self.main_rebar_dx, y1)
+        return p1, p2, p3, p4
+
+    @property
+    def center_of_axis_circle_points(self):
+        xs = self.axes_dist
+        ys = [self.base_dim + 10] * len(xs)  # constant 10: radius of circle
+        return tuple(zip(xs, ys))
+
+    @property
+    def axes_text(self):
+        return [f'{i[0]}{i[1]}' for i in self.axes_name]
 
 
 # class Scaled_Beam_Type(BeamType):

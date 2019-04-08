@@ -52,3 +52,15 @@ def test_add_texts_dimension(btdxf1):
 
 def test_add_dim_lines(btdxf1):
     pass
+
+
+def test_add_top_main_rebar(btdxf1):
+    pass
+
+
+def test_add_bot_main_rebar(btdxf1):
+    pass
+
+
+def test_add_axis_circle(btdxf1):
+    pass
