@@ -62,5 +62,9 @@ def test_add_bot_main_rebar(btdxf1):
     pass
 
 
-def test_add_axis_circle(btdxf1):
+def test_add_axes_circle(btdxf1):
+    pass
+
+
+def test_add_axes_text(btdxf1):
     pass
