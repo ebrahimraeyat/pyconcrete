@@ -187,4 +187,8 @@ def test_axes_text(bt1):
     assert bt1.axes_text == at
 
 
+def test_top_add_rebar_points(bt1):
+    pass
+
+
 # def test_scale(bt1):

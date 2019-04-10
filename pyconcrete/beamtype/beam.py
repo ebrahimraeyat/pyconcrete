@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pyconcrete.point import Point
 
 
 class Beam:
@@ -14,6 +15,8 @@ class Beam:
                  stirrup_len=None,
                  dx=0,
                  dy=0,
+                 is_first=False,
+                 is_last=False
                  ):
         self.length = length
         self.width = width
@@ -22,7 +25,10 @@ class Beam:
         self.stirrup_len = stirrup_len
         self.dx = dx
         self.dy = dy
-        Beam.increse_id()
+        self.is_first = is_first
+        self.is_last = is_last
+        self._scale = dict(horizontal=1, vertical=1)
+        self.id_ = id(self)
 
     @property
     def coordinates(self):
@@ -32,7 +38,9 @@ class Beam:
         x coordinate of ref. point = Axe of the left column,
         y coordinate of ref. point = top line of beam.
         if no column present, the line exted to the Axe of line,
-        for example p2 in the below pic.
+        for example p2 in the below pic. if beam is_first or is_last is True and no
+        column present, top or bottom line continue for FIRST_LAST_LINE_CONTINUE
+        value from the axis (p3 in pic, is_first=True)
 
         Axe of left column
              |                                                  |
@@ -40,30 +48,51 @@ class Beam:
         |    |     |                                            |
         |    |  p1 *-------------------------------------------*|p2  |
         |    |                                                  |    |
-        |    |  p3 *---------------------------------------* p4 |    |
-        |    |     |                                       |    |    |
-        |    |     |                                       |    |    |
+      p3*--------------------------------------------------* p4 |    |
+             |                                             |    |    |
+             |                                             |    |    |
         '''
         dx1 = self.columns_width['top']['left']
         dx2 = self.columns_width['top']['right']
         dx3 = self.columns_width['bot']['left']
         dx4 = self.columns_width['bot']['right']
-        p1 = (dx1 / 2 + self.dx, self.dy)
-        p2 = (self.length - dx2 / 2 + self.dx, self.dy)
-        p3 = (dx3 / 2 + self.dx, -self.height + self.dy)
-        p4 = (self.length - dx4 / 2 + self.dx, -self.height + self.dy)
+        move_point = Point(self.dx, self.dy)
+        p1 = Point(dx1 / 2, 0) + move_point
+        p2 = Point(self.length - dx2 / 2, 0) + move_point
+        p3 = Point(dx3 / 2, -self.height) + move_point
+        p4 = Point(self.length - dx4 / 2, -self.height) + move_point
+        if self.is_first:
+            if dx1 == 0 and dx3 == 0:
+                p1 = p1.plusx(-20)
+                p3 = p3.plusx(-20)
+            if dx1 == 0 and dx3 != 0:
+                p1 = p1.plusx(-dx3 / 2)  # constant value, -20
+            if dx3 == 0 and dx1 != 0:
+                p3 = p3.plusx(-dx1 / 2)
+        if self.is_last:
+            if dx2 == 0 and dx4 == 0:
+                p2 = p2.plusx(20)
+                p4 = p4.plusx(20)
+            elif dx2 == 0 and dx4 != 0:
+                p2 = p2.plusx(dx4 / 2)
+            if dx4 == 0 and dx2 != 0:
+                p4 = p4.plusx(dx2 / 2)
         coordinates = dict(
-            top=dict(left=p1,
-                     right=p2,),
-            bot=dict(left=p3,
-                     right=p4,),
+            top=dict(left=tuple(p1),
+                     right=tuple(p2),),
+            bot=dict(left=tuple(p3),
+                     right=tuple(p4),),
         )
         return coordinates
 
     @property
     def stirrups_dist(self):
         dx1 = self.columns_width['bot']['left']
+        if dx1 == 0:
+            dx1 = self.columns_width['top']['left']
         dx2 = self.columns_width['bot']['right']
+        if dx2 == 0:
+            dx2 = self.columns_width['top']['right']
         if not self.stirrup_len:
             return [dx1 / 2 + Beam.first_stirrup_dist + self.dx,
                     self.length - dx2 / 2 - Beam.first_stirrup_dist + self.dx]
@@ -83,20 +112,26 @@ class Beam:
             sp.append([(x, y1), (x, y2)])
         return sp
 
-    # def set_scale(self, horizontal=1, vertical=1):
-    #     self.first_stirrup_dist /= horizontal
-    #     self.col_extend_dist /= vertical
-    #     self.length /= horizontal
-    #     self.width /= horizontal
-    #     self.height /= vertical
-    #     w = self.columns_width_list
-    #     self.columns_width['top']['left'] = w[0] / horizontal
-    #     self.columns_width['top']['right'] = w[1] / horizontal
-    #     self.columns_width['bot']['left'] = w[2] / horizontal
-    #     self.columns_width['bot']['right'] = w[3] / horizontal
-    #     for i, d in enumerate(self.stirrup_len):
-    #         self.stirrup_len[i] = d / horizontal
-    #     self.scale = dict(horizontal=horizontal, vertical=vertical)
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, value):
+        horizontal, vertical = value
+        self.first_stirrup_dist /= horizontal
+        self.col_extend_dist /= vertical
+        self.length /= horizontal
+        self.width /= horizontal
+        self.height /= vertical
+        w = self.columns_width_list
+        self.columns_width['top']['left'] = w[0] / horizontal
+        self.columns_width['top']['right'] = w[1] / horizontal
+        self.columns_width['bot']['left'] = w[2] / horizontal
+        self.columns_width['bot']['right'] = w[3] / horizontal
+        for i, d in enumerate(self.stirrup_len):
+            self.stirrup_len[i] = d / horizontal
+        self._scale = dict(horizontal=horizontal, vertical=vertical)
 
     @property
     def columns_width_list(self):
@@ -106,9 +141,9 @@ class Beam:
         w4 = self.columns_width['bot']['right']
         return [w1, w2, w3, w4]
 
-    @classmethod
-    def increse_id(cls):
-        cls.id_ += 1
+    # # @classmethod
+    # def id_(self):
+    #     self.id_ =
 
     def __eq__(self, other):
         if all([
@@ -145,10 +180,12 @@ class Beam:
         p2 = self.coordinates['top']['right']
         x1, y1 = p1
         x2, y2 = p2
-        points.append((x1, y1 + Beam.col_extend_dist))
+        if self.columns_width['top']['left']:
+            points.append((x1, y1 + Beam.col_extend_dist))
         points.append(p1)
         points.append(p2)
-        points.append((x2, y2 + Beam.col_extend_dist))
+        if self.columns_width['top']['right']:
+            points.append((x2, y2 + Beam.col_extend_dist))
         return points
 
     @property
@@ -158,10 +195,12 @@ class Beam:
         p2 = self.coordinates['bot']['right']
         x1, y1 = p1
         x2, y2 = p2
-        points.append((x1, y1 - Beam.col_extend_dist))
+        if self.columns_width['bot']['left']:
+            points.append((x1, y1 - Beam.col_extend_dist))
         points.append(p1)
         points.append(p2)
-        points.append((x2, y2 - Beam.col_extend_dist))
+        if self.columns_width['bot']['right']:
+            points.append((x2, y2 - Beam.col_extend_dist))
         return points
 
     @property
@@ -169,15 +208,23 @@ class Beam:
         x, y1 = self.coordinates['bot']['left']
         _, y2 = self.coordinates['top']['left']
         dx = self.columns_width['bot']['left']
-        p1 = (x - dx, y1 - Beam.col_extend_dist)
-        p2 = (x - dx, y2 + Beam.col_extend_dist)
-        return [p1, p2]
+        p1 = Point(x - dx, y1)
+        p2 = Point(x - dx, y2)
+        if self.columns_width['bot']['left']:
+            p1 = p1.plusy(-Beam.col_extend_dist)
+        if self.columns_width['top']['left']:
+            p2 = p2.plusy(Beam.col_extend_dist)
+        return [tuple(p1), tuple(p2)]
 
     @property
     def right_edge_polyline(self):
         x, y1 = self.coordinates['bot']['right']
         _, y2 = self.coordinates['top']['right']
         dx = self.columns_width['bot']['right']
-        p1 = (x + dx, y1 - self.col_extend_dist)
-        p2 = (x + dx, y2 + self.col_extend_dist)
-        return [p1, p2]
+        p1 = Point(x + dx, y1)
+        p2 = Point(x + dx, y2)
+        if self.columns_width['bot']['right']:
+            p1 = p1.plusy(-Beam.col_extend_dist)
+        if self.columns_width['top']['right']:
+            p2 = p2.plusy(Beam.col_extend_dist)
+        return [tuple(p1), tuple(p2)]

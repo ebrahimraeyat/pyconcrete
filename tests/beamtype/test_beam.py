@@ -20,21 +20,21 @@ def _beam():
     return b1
 
 
-# @pytest.fixture
-# def scale_beam():
-#     '''
-#     scale beam to H=1:100 and V=1:25
-#     '''
-#     b1 = b.Beam(length=4.85,
-#                 width=.40,
-#                 height=1.8,
-#                 columns_width=dict(
-#                     bot=dict(left=.50, right=.40,),
-#                     top=dict(left=.40, right=.35,),
-#                 ),
-#                 stirrup_len=[.85, .85],
-#                 )
-#     return b1
+@pytest.fixture
+def scale_beam():
+    '''
+    scale beam to H=1:100 and V=1:25
+    '''
+    b1 = b.Beam(length=4.85,
+                width=.40,
+                height=1.8,
+                columns_width=dict(
+                    bot=dict(left=.50, right=.40,),
+                    top=dict(left=.40, right=.35,),
+                ),
+                stirrup_len=[.85, .85],
+                )
+    return b1
 
 
 @pytest.fixture
@@ -63,6 +63,22 @@ def _b3():
                 stirrup_len=None,
                 )
     return b3
+
+
+@pytest.fixture
+def beam_without_column():
+    beam = b.Beam(length=485,
+                  width=40,
+                  height=45,
+                  columns_width=dict(
+                      bot=dict(left=50, right=40,),
+                      top=dict(left=0, right=0,),
+                  ),
+                  stirrup_len=None,
+                  is_first=True,
+                  is_last=True,
+                  )
+    return beam
 
 
 @pytest.fixture
@@ -193,13 +209,46 @@ def test_right_edge_polyline(_beam):
     assert _beam.right_edge_polyline == rep
 
 
-# def test_scale_beam(_beam, scale_beam):
-#     assert _beam.scale == dict(horizontal=1, vertical=1)
-#     _beam.set_scale(horizontal=100, vertical=25)
-#     assert _beam.scale == dict(horizontal=100, vertical=25)
-#     assert _beam.coordinates == scale_beam.coordinates
-#     assert _beam.stirrups_dist == scale_beam.stirrups_dist
-#     assert _beam.top_polyline_points == scale_beam.top_polyline_points
-#     assert _beam.bot_polyline_points == scale_beam.bot_polyline_points
-#     assert _beam.first_stirrup_dist == .05
-#     assert _beam.col_extend_dist == .55
+def test_beam_without_column(beam_without_column):
+    p1 = (-25, 0)
+    p2 = (505, 0)
+    p3 = (25, -45)
+    p4 = (465, -45)
+    coordinates = dict(
+        top=dict(left=p1, right=p2,),
+        bot=dict(left=p3, right=p4,)
+    )
+
+    assert beam_without_column.coordinates == coordinates
+
+
+def test_is_first(_beam):
+    assert _beam.is_first == False
+
+
+def test_is_last(_beam):
+    assert _beam.is_last == False
+
+
+def test_left_edge_polyline_without_column(beam_without_column):
+    lep = [(-25, -45 - 13.75),
+           (-25, 0)]
+    assert beam_without_column.left_edge_polyline == lep
+
+
+def test_right_edge_polyline_without_column(beam_without_column):
+    rep = [(505, -45 - 13.75),
+           (505, 0)]
+    assert beam_without_column.right_edge_polyline == rep
+
+
+def test_scale_beam(_beam, scale_beam):
+    assert _beam.scale == dict(horizontal=1, vertical=1)
+    _beam.scale = (100, 25)
+    assert _beam.scale == dict(horizontal=100, vertical=25)
+    assert _beam.coordinates == scale_beam.coordinates
+    assert _beam.stirrups_dist == scale_beam.stirrups_dist
+    assert _beam.top_polyline_points == scale_beam.top_polyline_points
+    assert _beam.bot_polyline_points == scale_beam.bot_polyline_points
+    assert _beam.first_stirrup_dist == .05
+    assert _beam.col_extend_dist == .55

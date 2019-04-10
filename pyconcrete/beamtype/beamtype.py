@@ -57,7 +57,7 @@ class BeamType:
         '''
         bs = []
         axes_dist = self.axes_dist
-        for i in range(self.__len__()):
+        for i in range(len(self)):
             length = self.spans_len[i]
             dimension = self.beams_dimension[i]
             width = dimension[0]
@@ -70,12 +70,20 @@ class BeamType:
             )
             stirrup_len = self.stirrups_len[i]
             dx = axes_dist[i]
+            is_first = False
+            is_last = False
+            if i == 0:
+                is_first = True
+            if i == len(self) - 1:
+                is_last = True
             beam = b.Beam(length=length,
                           width=width,
                           height=height,
                           columns_width=cw,
                           stirrup_len=stirrup_len,
                           dx=dx,
+                          is_first=is_first,
+                          is_last=is_last,
                           )
             bs.append(beam)
         return bs
