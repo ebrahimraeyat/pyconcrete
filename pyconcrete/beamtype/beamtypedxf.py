@@ -42,11 +42,11 @@ class BeamTypeDxf:
         for t, d in zip(texts, dist):
             p = (d, 0)
             self.block.add_text(
-                t, dxfattribs={'color': 2, 'height': 10}  # constant
+                t, dxfattribs={'color': 2, 'height': 5 / self.beamtype.vertical_scale}  # constant
             ).set_pos(p, align='BOTTOM_CENTER')
 
     def add_dim_lines(self):
-        d = self.beamtype.base_dim - 8
+        d = self.beamtype.base_dim - 8 / self.beamtype.vertical_scale
         for pt in self.beamtype.axes_dim_points:
             self.block.add_aligned_dim(
                 pt[0],
@@ -64,7 +64,7 @@ class BeamTypeDxf:
 
     def add_axes_circle(self):
         for pt in self.beamtype.center_of_axis_circle_points:
-            self.block.add_circle(center=pt, radius=10,
+            self.block.add_circle(center=pt, radius=10 / self.beamtype.vertical_scale,
                                   dxfattribs={'color': 2})
 
     def add_axes_text(self):
@@ -72,7 +72,7 @@ class BeamTypeDxf:
         points = self.beamtype.center_of_axis_circle_points
         for t, pt in zip(texts, points):
             self.block.add_text(
-                t, dxfattribs={'color': 3, 'height': 8}  # constant
+                t, dxfattribs={'color': 3, 'height': 8 / self.beamtype.vertical_scale}  # constant
             ).set_pos(pt, align='MIDDLE_CENTER')
 
     def to_dxf(self):
@@ -87,4 +87,4 @@ class BeamTypeDxf:
         self.add_bot_main_rebar()
         self.add_axes_circle()
         self.add_axes_text()
-        # self.add_axes_dim()
+        self.add_axes_dim()

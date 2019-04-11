@@ -6,6 +6,8 @@ class Beam:
     id_ = 0
     first_stirrup_dist = 5
     col_extend_dist = 13.75
+    console_extend_dist = 20
+    stirrup_dy = 1.25
 
     def __init__(self,
                  length,
@@ -16,7 +18,8 @@ class Beam:
                  dx=0,
                  dy=0,
                  is_first=False,
-                 is_last=False
+                 is_last=False,
+                 scale=(1, 1),
                  ):
         self.length = length
         self.width = width
@@ -27,8 +30,16 @@ class Beam:
         self.dy = dy
         self.is_first = is_first
         self.is_last = is_last
-        self._scale = dict(horizontal=1, vertical=1)
+        self.scale = scale
+        self.scale_constant()
         self.id_ = id(self)
+
+    def scale_constant(self):
+        h, v = self.scale
+        self.first_stirrup_dist /= h
+        self.col_extend_dist /= v
+        self.console_extend_dist /= h
+        self.stirrup_dy /= v
 
     @property
     def coordinates(self):
@@ -61,18 +72,19 @@ class Beam:
         p2 = Point(self.length - dx2 / 2, 0) + move_point
         p3 = Point(dx3 / 2, -self.height) + move_point
         p4 = Point(self.length - dx4 / 2, -self.height) + move_point
+        extend = self.console_extend_dist
         if self.is_first:
             if dx1 == 0 and dx3 == 0:
-                p1 = p1.plusx(-20)
-                p3 = p3.plusx(-20)
+                p1 = p1.plusx(-extend)
+                p3 = p3.plusx(-extend)
             if dx1 == 0 and dx3 != 0:
                 p1 = p1.plusx(-dx3 / 2)  # constant value, -20
             if dx3 == 0 and dx1 != 0:
                 p3 = p3.plusx(-dx1 / 2)
         if self.is_last:
             if dx2 == 0 and dx4 == 0:
-                p2 = p2.plusx(20)
-                p4 = p4.plusx(20)
+                p2 = p2.plusx(extend)
+                p4 = p4.plusx(extend)
             elif dx2 == 0 and dx4 != 0:
                 p2 = p2.plusx(dx4 / 2)
             if dx4 == 0 and dx2 != 0:
@@ -94,44 +106,44 @@ class Beam:
         if dx2 == 0:
             dx2 = self.columns_width['top']['right']
         if not self.stirrup_len:
-            return [dx1 / 2 + Beam.first_stirrup_dist + self.dx,
-                    self.length - dx2 / 2 - Beam.first_stirrup_dist + self.dx]
+            return [dx1 / 2 + self.first_stirrup_dist + self.dx,
+                    self.length - dx2 / 2 - self.first_stirrup_dist + self.dx]
         else:
-            x1 = dx1 / 2 + Beam.first_stirrup_dist + self.dx
+            x1 = dx1 / 2 + self.first_stirrup_dist + self.dx
             x2 = x1 + self.stirrup_len[0]
-            x4 = self.length - dx2 / 2 - Beam.first_stirrup_dist + self.dx
+            x4 = self.length - dx2 / 2 - self.first_stirrup_dist + self.dx
             x3 = self.length - dx2 / 2 - self.stirrup_len[1] + self.dx
         return [x1, x2, x3, x4]
 
     @property
     def stirrup_points(self):
-        y1 = -1.25
-        y2 = -self.height + 1.25
+        y1 = -self.stirrup_dy
+        y2 = -self.height + self.stirrup_dy
         sp = []
         for x in self.stirrups_dist:
             sp.append([(x, y1), (x, y2)])
         return sp
 
-    @property
-    def scale(self):
-        return self._scale
+    # @property
+    # def scale(self):
+    #     return self._scale
 
-    @scale.setter
-    def scale(self, value):
-        horizontal, vertical = value
-        self.first_stirrup_dist /= horizontal
-        self.col_extend_dist /= vertical
-        self.length /= horizontal
-        self.width /= horizontal
-        self.height /= vertical
-        w = self.columns_width_list
-        self.columns_width['top']['left'] = w[0] / horizontal
-        self.columns_width['top']['right'] = w[1] / horizontal
-        self.columns_width['bot']['left'] = w[2] / horizontal
-        self.columns_width['bot']['right'] = w[3] / horizontal
-        for i, d in enumerate(self.stirrup_len):
-            self.stirrup_len[i] = d / horizontal
-        self._scale = dict(horizontal=horizontal, vertical=vertical)
+    # @scale.setter
+    # def scale(self, value):
+    #     horizontal, vertical = value
+    #     self.first_stirrup_dist /= horizontal
+    #     self.col_extend_dist /= vertical
+    #     self.length /= horizontal
+    #     self.width /= horizontal
+    #     self.height /= vertical
+    #     w = self.columns_width_list
+    #     self.columns_width['top']['left'] = w[0] / horizontal
+    #     self.columns_width['top']['right'] = w[1] / horizontal
+    #     self.columns_width['bot']['left'] = w[2] / horizontal
+    #     self.columns_width['bot']['right'] = w[3] / horizontal
+    #     for i, d in enumerate(self.stirrup_len):
+    #         self.stirrup_len[i] = d / horizontal
+    #     self._scale = dict(horizontal=horizontal, vertical=vertical)
 
     @property
     def columns_width_list(self):
@@ -181,11 +193,11 @@ class Beam:
         x1, y1 = p1
         x2, y2 = p2
         if self.columns_width['top']['left']:
-            points.append((x1, y1 + Beam.col_extend_dist))
+            points.append((x1, y1 + self.col_extend_dist))
         points.append(p1)
         points.append(p2)
         if self.columns_width['top']['right']:
-            points.append((x2, y2 + Beam.col_extend_dist))
+            points.append((x2, y2 + self.col_extend_dist))
         return points
 
     @property
@@ -196,11 +208,11 @@ class Beam:
         x1, y1 = p1
         x2, y2 = p2
         if self.columns_width['bot']['left']:
-            points.append((x1, y1 - Beam.col_extend_dist))
+            points.append((x1, y1 - self.col_extend_dist))
         points.append(p1)
         points.append(p2)
         if self.columns_width['bot']['right']:
-            points.append((x2, y2 - Beam.col_extend_dist))
+            points.append((x2, y2 - self.col_extend_dist))
         return points
 
     @property
@@ -211,9 +223,9 @@ class Beam:
         p1 = Point(x - dx, y1)
         p2 = Point(x - dx, y2)
         if self.columns_width['bot']['left']:
-            p1 = p1.plusy(-Beam.col_extend_dist)
+            p1 = p1.plusy(-self.col_extend_dist)
         if self.columns_width['top']['left']:
-            p2 = p2.plusy(Beam.col_extend_dist)
+            p2 = p2.plusy(self.col_extend_dist)
         return [tuple(p1), tuple(p2)]
 
     @property
@@ -224,7 +236,7 @@ class Beam:
         p1 = Point(x + dx, y1)
         p2 = Point(x + dx, y2)
         if self.columns_width['bot']['right']:
-            p1 = p1.plusy(-Beam.col_extend_dist)
+            p1 = p1.plusy(-self.col_extend_dist)
         if self.columns_width['top']['right']:
-            p2 = p2.plusy(Beam.col_extend_dist)
+            p2 = p2.plusy(self.col_extend_dist)
         return [tuple(p1), tuple(p2)]

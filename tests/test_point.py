@@ -33,8 +33,7 @@ def test_tuple(p1):
 
 
 def test_scale():
-    p1 = p.Point(2, 30)
-    p1.scale(h=.5, v=.1)
+    p1 = p.Point.scale(2, 30, 2, 10)
     assert p1 == p.Point(1, 3)
 
 

@@ -17,6 +17,10 @@ class Point:
         self.x *= h
         self.y *= v
 
+    @classmethod
+    def scale(cls, x, y, h, v):
+        return cls(x / h, y / v)
+
     def __eq__(self, other):
         return all((
             np.allclose(self.x, other.x),
