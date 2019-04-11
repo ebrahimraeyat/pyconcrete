@@ -45,7 +45,7 @@ msp = new_dwg.modelspace()
 for i, bt in enumerate((bt1, bt2, bt3, bt4)):
     btdxf = beamtypedxf.BeamTypeDxf(bt, new_dwg)
     btdxf.to_dxf()
-    msp.add_blockref(bt.uid, (200, i * -150))
+    msp.add_blockref(bt.uid, (200, i * 150))
 new_dwg.saveas('/home/ebi/beamtype1.dxf')
 
 # scaled beamtype
