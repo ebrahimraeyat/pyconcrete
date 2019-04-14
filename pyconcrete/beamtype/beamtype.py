@@ -1,7 +1,7 @@
 # from dataclasses import dataclass, field
 import uuid
 
-from pyconcrete.beamtype import beam as b
+from pyconcrete.beamtype import beam
 
 
 class BeamType:
@@ -14,12 +14,16 @@ class BeamType:
                  extend_edge_len: int = 50,
                  base_dim: int = 38,
                  extend_main_rebar: int = 6,
-                 top_main_rebars: dict = None,
-                 bot_main_rebars: dict = None,
-                 top_add_rebars: dict = None,
-                 bot_add_rebars: dict = None,
-                 horizontal_scale: int = 1,
-                 vertical_scale: int = 1,
+                 main_rebar_dx: int = 6,
+                 main_rebar_dy: int = 2,
+                 first_stirrup_dist=5,
+                 col_extend_dist=13.75,
+                 console_extend_dist=20,
+                 stirrup_dy=1.25,
+                 # top_main_rebars: dict = None,
+                 # bot_main_rebars: dict = None,
+                 top_add_rebars: list = [],
+                 bot_add_rebars: list = None,
                  uid: str = None,
                  ):
         self.spans_len = spans_len
@@ -30,8 +34,13 @@ class BeamType:
         self.extend_edge_len = extend_edge_len
         self.base_dim = base_dim
         self.extend_main_rebar = extend_main_rebar
-        self.horizontal_scale = horizontal_scale
-        self.vertical_scale = vertical_scale
+        self.main_rebar_dx = main_rebar_dx
+        self.main_rebar_dy = main_rebar_dy
+        self.first_stirrup_dist = first_stirrup_dist
+        self.col_extend_dist = col_extend_dist
+        self.console_extend_dist = console_extend_dist
+        self.stirrup_dy = stirrup_dy
+        self.top_add_rebars = top_add_rebars
         self.uid = str(uuid.uuid4().int)
 
         # @dataclass
@@ -80,7 +89,7 @@ class BeamType:
                 is_first = True
             if i == len(self) - 1:
                 is_last = True
-            beam = b.Beam(length=length,
+            b = beam.Beam(length=length,
                           width=width,
                           height=height,
                           columns_width=cw,
@@ -88,9 +97,12 @@ class BeamType:
                           dx=dx,
                           is_first=is_first,
                           is_last=is_last,
-                          scale=self.scale,
+                          first_stirrup_dist=self.first_stirrup_dist,
+                          col_extend_dist=self.col_extend_dist,
+                          console_extend_dist=self.console_extend_dist,
+                          stirrup_dy=self.stirrup_dy
                           )
-            bs.append(beam)
+            bs.append(b)
         return bs
 
     @property
@@ -126,14 +138,7 @@ class BeamType:
         return app
 
     def beams_dimensions_text(self):
-        bdt = []
-        for bd in self.beams_dimension:
-            width, height = bd
-            width = int(width * self.horizontal_scale)
-            height = int(height * self.vertical_scale)
-            text = f'{width}X{height}'
-            bdt.append(text)
-        return bdt
+        pass
 
     @property
     def max_beams_height(self):
@@ -195,7 +200,7 @@ class BeamType:
         epps.append(b2.right_edge_polyline)
         return epps
 
-    def __left_right_polylines_x(self):
+    def _left_right_polylines_x(self):
         p1, p2 = self.edges_polyline_points
         x1 = p1[0][0]
         x2 = p2[0][0]
@@ -203,9 +208,7 @@ class BeamType:
 
     @property
     def top_main_rebar_points(self):
-        self.main_rebar_dx = 6 / self.horizontal_scale
-        self.main_rebar_dy = 2 / self.vertical_scale
-        x1, x2 = self.__left_right_polylines_x()
+        x1, x2 = self._left_right_polylines_x()
         p1 = (x1 + self.main_rebar_dx, -self.main_rebar_dy - self.extend_main_rebar)
         p2 = (x1 + self.main_rebar_dx, -self.main_rebar_dy)
         p3 = (x2 - self.main_rebar_dx, -self.main_rebar_dy)
@@ -214,10 +217,8 @@ class BeamType:
 
     @property
     def bot_main_rebar_points(self):
-        self.main_rebar_dx = 6 / self.horizontal_scale
-        self.main_rebar_dy = 2 / self.vertical_scale
         max_height = self.max_beams_height
-        x1, x2 = self.__left_right_polylines_x()
+        x1, x2 = self._left_right_polylines_x()
         y1 = -max_height + (self.main_rebar_dy + self.extend_main_rebar)
         y2 = -max_height + self.main_rebar_dy
         p1 = (x1 + self.main_rebar_dx, y1)
@@ -228,42 +229,8 @@ class BeamType:
 
     @property
     def center_of_axis_circle_points(self):
-        xs = self.axes_dist
-        ys = [self.base_dim + 10 / self.vertical_scale] * len(xs)  # constant 10: radius of circle
-        return tuple(zip(xs, ys))
+        pass
 
     @property
     def axes_text(self):
         return [f'{i[0]}{i[1]}' for i in self.axes_name]
-
-    @property
-    def scale(self):
-        return self.horizontal_scale, self.vertical_scale
-
-    @scale.setter
-    def scale(self, value):
-        h, v = value
-        self.spans_len = [i / h for i in self.spans_len]
-        self.beams_dimension = [(i / h, j / v) for i, j in self.beams_dimension]
-        for key in self.columns_width.keys():
-            self.columns_width[key] = [i / h for i in self.columns_width[key]]
-        stirrups_len = []
-        for i in self.stirrups_len:
-            if i:
-                tmp = []
-                for j in tmp:
-                    tmp.append(j / h)
-                stirrups_len.append(tmp)
-            else:
-                stirrups_len.append(i)
-        self.stirrups_len = stirrups_len
-        self.extend_edge_len /= v
-        self.base_dim /= v
-        self.extend_main_rebar /= v
-        self.horizontal_scale = h
-        self.vertical_scale = v
-# class Scaled_Beam_Type(BeamType):
-#     def __init__(self, horizontal, vertical, **kwargs):
-#         super().__init__(**kwargs)
-#         self.horizontal = horizontal
-#         self.vertical = vertical

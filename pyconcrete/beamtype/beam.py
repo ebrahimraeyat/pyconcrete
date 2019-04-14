@@ -4,10 +4,6 @@ from pyconcrete.point import Point
 
 class Beam:
     id_ = 0
-    first_stirrup_dist = 5
-    col_extend_dist = 13.75
-    console_extend_dist = 20
-    stirrup_dy = 1.25
 
     def __init__(self,
                  length,
@@ -19,7 +15,11 @@ class Beam:
                  dy=0,
                  is_first=False,
                  is_last=False,
-                 scale=(1, 1),
+                 first_stirrup_dist=5,
+                 col_extend_dist=13.75,
+                 console_extend_dist=20,
+                 stirrup_dy=1.25,
+                 # scale=(1, 1),
                  ):
         self.length = length
         self.width = width
@@ -30,16 +30,20 @@ class Beam:
         self.dy = dy
         self.is_first = is_first
         self.is_last = is_last
-        self.scale = scale
-        self.scale_constant()
+        self.first_stirrup_dist = first_stirrup_dist
+        self.col_extend_dist = col_extend_dist
+        self.console_extend_dist = console_extend_dist
+        self.stirrup_dy = stirrup_dy
+        # self.scale = scale
+        # self.scale_constant()
         self.id_ = id(self)
 
-    def scale_constant(self):
-        h, v = self.scale
-        self.first_stirrup_dist /= h
-        self.col_extend_dist /= v
-        self.console_extend_dist /= h
-        self.stirrup_dy /= v
+    # def scale_constant(self):
+    #     h, v = self.scale
+    #     self.first_stirrup_dist /= h
+    #     self.col_extend_dist /= v
+    #     self.console_extend_dist /= h
+    #     self.stirrup_dy /= v
 
     @property
     def coordinates(self):
@@ -78,7 +82,7 @@ class Beam:
                 p1 = p1.plusx(-extend)
                 p3 = p3.plusx(-extend)
             if dx1 == 0 and dx3 != 0:
-                p1 = p1.plusx(-dx3 / 2)  # constant value, -20
+                p1 = p1.plusx(-dx3 / 2)
             if dx3 == 0 and dx1 != 0:
                 p3 = p3.plusx(-dx1 / 2)
         if self.is_last:

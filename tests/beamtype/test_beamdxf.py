@@ -25,7 +25,7 @@ def beam1():
                 first_stirrup_dist=5,
                 width=40,
                 height=45,
-                scale=dict(horizontal=1, vertical=1),
+                # scale=dict(horizontal=1, vertical=1),
                 )
 
 

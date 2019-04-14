@@ -42,11 +42,11 @@ class BeamTypeDxf:
         for t, d in zip(texts, dist):
             p = (d, 0)
             self.block.add_text(
-                t, dxfattribs={'color': 2, 'height': 5 / self.beamtype.vertical_scale}  # constant
+                t, dxfattribs={'color': 2, 'height': 5 / self.beamtype.vertical}  # constant
             ).set_pos(p, align='BOTTOM_CENTER')
 
     def add_dim_lines(self):
-        d = self.beamtype.base_dim - 8 / self.beamtype.vertical_scale
+        d = self.beamtype.base_dim - 8 / self.beamtype.vertical
         for pt in self.beamtype.axes_dim_points:
             self.block.add_aligned_dim(
                 pt[0],
@@ -64,7 +64,7 @@ class BeamTypeDxf:
 
     def add_axes_circle(self):
         for pt in self.beamtype.center_of_axis_circle_points:
-            self.block.add_circle(center=pt, radius=10 / self.beamtype.vertical_scale,
+            self.block.add_circle(center=pt, radius=10 / self.beamtype.vertical,
                                   dxfattribs={'color': 2})
 
     def add_axes_text(self):
@@ -72,8 +72,12 @@ class BeamTypeDxf:
         points = self.beamtype.center_of_axis_circle_points
         for t, pt in zip(texts, points):
             self.block.add_text(
-                t, dxfattribs={'color': 3, 'height': 8 / self.beamtype.vertical_scale}  # constant
+                t, dxfattribs={'color': 3, 'height': 8 / self.beamtype.vertical}  # constant
             ).set_pos(pt, align='MIDDLE_CENTER')
+
+    def add_top_add_rebars(self):
+        for pt in self.beamtype.top_add_rebars:
+            self.block.add_polyline2d(pt, dxfattribs={'color': 6})
 
     def to_dxf(self):
         self.add_top_polylines()
@@ -88,3 +92,4 @@ class BeamTypeDxf:
         self.add_axes_circle()
         self.add_axes_text()
         self.add_axes_dim()
+        # self.add_top_add_rebars()
