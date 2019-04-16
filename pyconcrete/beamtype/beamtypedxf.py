@@ -6,7 +6,7 @@ from pyconcrete.beamtype import beamtype as bt
 class BeamTypeDxf:
     def __init__(self,
                  beamtype: bt.BeamType,
-                 dwg: ezdxf.drawing.Drawing
+                 dwg#: ezdxf.drawing.Drawing
                  ):
         self.beamtype = beamtype
         self.dwg = dwg
@@ -79,6 +79,10 @@ class BeamTypeDxf:
         for pt in self.beamtype.top_add_rebars:
             self.block.add_polyline2d(pt, dxfattribs={'color': 6})
 
+    def add_bot_add_rebars(self):
+        for pt in self.beamtype.bot_add_rebars:
+            self.block.add_polyline2d(pt, dxfattribs={'color': 6})
+
     def to_dxf(self):
         self.add_top_polylines()
         self.add_bot_polylines()
@@ -92,4 +96,5 @@ class BeamTypeDxf:
         self.add_axes_circle()
         self.add_axes_text()
         self.add_axes_dim()
-        # self.add_top_add_rebars()
+        self.add_top_add_rebars()
+        self.add_bot_add_rebars()

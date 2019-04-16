@@ -70,3 +70,29 @@ class ScaleBeamType(BeamType):
         xs = self.axes_dist
         ys = len(xs) * [self.base_dim + 10 / self.vertical]  # constant 10: radius of circle
         return tuple(zip(xs, ys))
+
+    @property
+    def top_add_rebars(self):
+        tars = super().top_add_rebars
+        new_tars = []
+        for i in tars:
+            tmp = []
+            for j in i:
+                x = j[0] / self.horizontal
+                y = j[1] / self.vertical
+                tmp.append((x, y))
+            new_tars.append(tmp)
+        return new_tars
+
+    @property
+    def bot_add_rebars(self):
+        bars = super().bot_add_rebars
+        new_bars = []
+        for i in bars:
+            tmp = []
+            for j in i:
+                x = j[0] / self.horizontal
+                y = j[1] / self.vertical
+                tmp.append((x, y))
+            new_bars.append(tmp)
+        return new_bars

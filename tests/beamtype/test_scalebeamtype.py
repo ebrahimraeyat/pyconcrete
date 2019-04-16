@@ -11,16 +11,16 @@ vertical = 20
 @pytest.fixture
 def sbt1():
     tars = []
-    y1 = -9.4 / 20
-    y2 = -3.4 / 20
-    tars.append([(-.1125, y1),
-                 (-.1125, y2),
-                 (1.21, y2)])
-    tars.append([(1.75, y2),
-                 (4.857, y2)])
-    tars.append([(6.41, y2),
-                 (8.4375, y2),
-                 (8.4375, y1)
+    y1 = -9.4
+    y2 = -3.4
+    tars.append([(-11.25, y1),
+                 (-11.25, y2),
+                 (121, y2)])
+    tars.append([(175, y2),
+                 (485.7, y2)])
+    tars.append([(641, y2),
+                 (843.75, y2),
+                 (843.75, y1)
                  ])
     sbt1 = sbt.ScaleBeamType(horizontal=horizontal,
                              vertical=vertical,
@@ -209,21 +209,6 @@ def test_axes_text(sbt1):
     assert sbt1.axes_text == at
 
 
-# def test_top_add_rebar_points(sbt1):
-#     pass
-
-
-# def test_scale(sbt1, sbt1_scale):
-#     assert sbt1.scale == (1, 1)
-#     assert sbt1_scale.scale == (75, 20)
-
-
-# def test_scaled_beamtype_type(sbt1):
-#     sbt1.scale = (75, 20)
-#     assert isinstance(sbt1, bt.BeamType)
-#     assert hasattr(sbt1, 'beams_dimensions_text')
-
-
 def test_scaled_beams_dimensions_text(sbt1):
     bdt = ['40X40', '40X40']
     assert sbt1.beams_dimensions_text() == bdt
@@ -243,3 +228,7 @@ def test_top_add_rebars(sbt1):
                  (8.4375, y1)
                  ])
     assert sbt1.top_add_rebars == tars
+
+
+def test_bot_add_rebars(sbt1):
+    assert sbt1.bot_add_rebars == []

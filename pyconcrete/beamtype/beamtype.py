@@ -23,7 +23,7 @@ class BeamType:
                  # top_main_rebars: dict = None,
                  # bot_main_rebars: dict = None,
                  top_add_rebars: list = [],
-                 bot_add_rebars: list = None,
+                 bot_add_rebars: list = [],
                  uid: str = None,
                  ):
         self.spans_len = spans_len
@@ -40,7 +40,8 @@ class BeamType:
         self.col_extend_dist = col_extend_dist
         self.console_extend_dist = console_extend_dist
         self.stirrup_dy = stirrup_dy
-        self.top_add_rebars = top_add_rebars
+        self._top_add_rebars = top_add_rebars
+        self._bot_add_rebars = bot_add_rebars
         self.uid = str(uuid.uuid4().int)
 
         # @dataclass
@@ -234,3 +235,19 @@ class BeamType:
     @property
     def axes_text(self):
         return [f'{i[0]}{i[1]}' for i in self.axes_name]
+
+    @property
+    def top_add_rebars(self):
+        return self._top_add_rebars
+
+    @top_add_rebars.setter
+    def top_add_rebars(self):
+        pass
+
+    @property
+    def bot_add_rebars(self):
+        return self._bot_add_rebars
+
+    @bot_add_rebars.setter
+    def bot_add_rebars(self):
+        pass

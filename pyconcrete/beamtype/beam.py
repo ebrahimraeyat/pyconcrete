@@ -19,7 +19,6 @@ class Beam:
                  col_extend_dist=13.75,
                  console_extend_dist=20,
                  stirrup_dy=1.25,
-                 # scale=(1, 1),
                  ):
         self.length = length
         self.width = width
@@ -34,16 +33,7 @@ class Beam:
         self.col_extend_dist = col_extend_dist
         self.console_extend_dist = console_extend_dist
         self.stirrup_dy = stirrup_dy
-        # self.scale = scale
-        # self.scale_constant()
         self.id_ = id(self)
-
-    # def scale_constant(self):
-    #     h, v = self.scale
-    #     self.first_stirrup_dist /= h
-    #     self.col_extend_dist /= v
-    #     self.console_extend_dist /= h
-    #     self.stirrup_dy /= v
 
     @property
     def coordinates(self):
@@ -97,8 +87,7 @@ class Beam:
             top=dict(left=tuple(p1),
                      right=tuple(p2),),
             bot=dict(left=tuple(p3),
-                     right=tuple(p4),),
-        )
+                     right=tuple(p4),),)
         return coordinates
 
     @property
@@ -128,27 +117,6 @@ class Beam:
             sp.append([(x, y1), (x, y2)])
         return sp
 
-    # @property
-    # def scale(self):
-    #     return self._scale
-
-    # @scale.setter
-    # def scale(self, value):
-    #     horizontal, vertical = value
-    #     self.first_stirrup_dist /= horizontal
-    #     self.col_extend_dist /= vertical
-    #     self.length /= horizontal
-    #     self.width /= horizontal
-    #     self.height /= vertical
-    #     w = self.columns_width_list
-    #     self.columns_width['top']['left'] = w[0] / horizontal
-    #     self.columns_width['top']['right'] = w[1] / horizontal
-    #     self.columns_width['bot']['left'] = w[2] / horizontal
-    #     self.columns_width['bot']['right'] = w[3] / horizontal
-    #     for i, d in enumerate(self.stirrup_len):
-    #         self.stirrup_len[i] = d / horizontal
-    #     self._scale = dict(horizontal=horizontal, vertical=vertical)
-
     @property
     def columns_width_list(self):
         w1 = self.columns_width['top']['left']
@@ -156,10 +124,6 @@ class Beam:
         w3 = self.columns_width['bot']['left']
         w4 = self.columns_width['bot']['right']
         return [w1, w2, w3, w4]
-
-    # # @classmethod
-    # def id_(self):
-    #     self.id_ =
 
     def __eq__(self, other):
         if all([
@@ -244,3 +208,13 @@ class Beam:
         if self.columns_width['top']['right']:
             p2 = p2.plusy(self.col_extend_dist)
         return [tuple(p1), tuple(p2)]
+
+    @property
+    def stirrup_dim_points(self):
+        y = -self.height / 2  # can be constant in future
+        xs = self.stirrups_dist
+        zip_ = zip(xs[:-1], xs[1:])
+        sdps = []
+        for xi, xj in zip_:
+            sdps.append([(xi, y), (xj, y)])
+        return sdps
