@@ -54,3 +54,6 @@ class Point:
         '''
         yield self.x
         yield self.y
+
+    def __truediv__(self, a):
+        return Point(self.x / a, self.y / a)

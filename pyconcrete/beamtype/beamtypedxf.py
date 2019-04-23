@@ -6,7 +6,7 @@ from pyconcrete.beamtype import beamtype as bt
 class BeamTypeDxf:
     def __init__(self,
                  beamtype: bt.BeamType,
-                 dwg#: ezdxf.drawing.Drawing
+                 dwg  # : ezdxf.drawing.Drawing
                  ):
         self.beamtype = beamtype
         self.dwg = dwg
@@ -37,21 +37,26 @@ class BeamTypeDxf:
         pass
 
     def add_texts_dimension(self):
-        texts = self.beamtype.beams_dimensions_text()
+        texts = self.beamtype.beams_dimensions_text
         dist = self.beamtype.center_of_beams_dist
         for t, d in zip(texts, dist):
             p = (d, 0)
             self.block.add_text(
-                t, dxfattribs={'color': 2, 'height': 5 / self.beamtype.vertical}  # constant
+                t,
+                dxfattribs={
+                'color': 2,
+                'height': 5 / self.beamtype.vertical,
+                'style': 'SAZE_STYLE1',}  # constant
             ).set_pos(p, align='BOTTOM_CENTER')
 
     def add_dim_lines(self):
         d = self.beamtype.base_dim - 8 / self.beamtype.vertical
-        for pt in self.beamtype.axes_dim_points:
+        for i, pt in enumerate(self.beamtype.axes_dim_points):
             self.block.add_aligned_dim(
-                pt[0],
-                pt[1],
+                *pt,
                 d,
+                text=self.beamtype.spans_len_text[i],
+                dimstyle='SAZE_DIM_STYLE',
                 dxfattribs={'color': 2, })
 
     def add_top_main_rebar(self):
@@ -72,7 +77,10 @@ class BeamTypeDxf:
         points = self.beamtype.center_of_axis_circle_points
         for t, pt in zip(texts, points):
             self.block.add_text(
-                t, dxfattribs={'color': 3, 'height': 8 / self.beamtype.vertical}  # constant
+                t,
+                dxfattribs={'color': 3,
+                'height': 8 / self.beamtype.vertical, # constant
+                'style': 'SAZE_STYLE1',}  # constant
             ).set_pos(pt, align='MIDDLE_CENTER')
 
     def add_top_add_rebars(self):

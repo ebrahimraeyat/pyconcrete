@@ -36,6 +36,7 @@ class BeamType:
         self.extend_main_rebar = extend_main_rebar
         self.main_rebar_dx = main_rebar_dx
         self.main_rebar_dy = main_rebar_dy
+        # self.add_rebar_dy = add_rebar_dy
         self.first_stirrup_dist = first_stirrup_dist
         self.col_extend_dist = col_extend_dist
         self.console_extend_dist = console_extend_dist
@@ -43,22 +44,14 @@ class BeamType:
         self._top_add_rebars = top_add_rebars
         self._bot_add_rebars = bot_add_rebars
         self.uid = str(uuid.uuid4().int)
+        self.spans_len_text = self._spans_len_text()
+        self.beams_dimensions_text = self._beams_dimensions_text()
 
-        # @dataclass
-        # class BeamType:
-        #     spans_len: list
-        #     beams_dimension: list
-        #     columns_width: dict
-        #     stirrups_len: list
-        #     axes_name: list
-        #     extend_edge_len: int = 50
-        #     base_dim: int = 38
-        #     extend_main_rebar: int = 6
-        #     top_main_rebars: dict = None
-        #     bot_main_rebars: dict = None
-        #     top_add_rebars: dict = None
-        #     bot_add_rebars: dict = None
-        #     uid: str = str(uuid.uuid4().int)
+    def _spans_len_text(self):
+        slt = []
+        for len_ in self.spans_len:
+            slt.append(str(len_))
+        return slt
 
     def __len__(self):
         return len(self.spans_len)
@@ -138,8 +131,13 @@ class BeamType:
             ])
         return app
 
-    def beams_dimensions_text(self):
-        pass
+    def _beams_dimensions_text(self):
+        bdt = []
+        for bd in self.beams_dimension:
+            width, height = bd
+            text = f'{width}X{height}'
+            bdt.append(text)
+        return bdt
 
     @property
     def max_beams_height(self):
@@ -238,7 +236,10 @@ class BeamType:
 
     @property
     def top_add_rebars(self):
-        return self._top_add_rebars
+        tar_points = []
+        for rebar in self._top_add_rebars:
+            tar_points.append(rebar.points())
+        return tar_points
 
     @top_add_rebars.setter
     def top_add_rebars(self):

@@ -3,6 +3,7 @@ import numpy as np
 
 from pyconcrete.beamtype import scalebeamtype as sbt
 from pyconcrete.beamtype import beam as b
+from pyconcrete import rebar
 
 horizontal = 100
 vertical = 20
@@ -10,18 +11,14 @@ vertical = 20
 
 @pytest.fixture
 def sbt1():
-    tars = []
-    y1 = -9.4
     y2 = -3.4
-    tars.append([(-11.25, y1),
-                 (-11.25, y2),
-                 (121, y2)])
-    tars.append([(175, y2),
-                 (485.7, y2)])
-    tars.append([(641, y2),
-                 (843.75, y2),
-                 (843.75, y1)
-                 ])
+    left_rebar = rebar.LRebar(length=132.2, insert=(-11.25, y2))
+    mid_rebar = rebar.Rebar(length=310.7, insert=(175, y2))
+    right_rebar = rebar.LRebar(length=202.75,
+                               h_align='right',
+                               insert=(641, y2))
+    tars = [left_rebar, mid_rebar, right_rebar]
+
     sbt1 = sbt.ScaleBeamType(horizontal=horizontal,
                              vertical=vertical,
                              spans_len=[295, 540],
@@ -81,6 +78,10 @@ def test_spans_len(sbt1):
     assert sbt1.spans_len == [2.95, 5.40]
 
 
+def test_spans_len_text(sbt1):
+    assert sbt1.spans_len_text == ['295', '540']
+
+
 def test_beams_dimension(sbt1):
     bd = [(.40, 2), (.40, 2)]
     assert sbt1.beams_dimension == bd
@@ -129,7 +130,7 @@ def test_axes_polyline_points(sbt1):
 
 def test_beams_dimensions_text(sbt1):
     bdt = ['40X40', '40X40']
-    assert sbt1.beams_dimensions_text() == bdt
+    assert sbt1.beams_dimensions_text == bdt
 
 
 def test_max_beams_height(sbt1):
@@ -211,7 +212,7 @@ def test_axes_text(sbt1):
 
 def test_scaled_beams_dimensions_text(sbt1):
     bdt = ['40X40', '40X40']
-    assert sbt1.beams_dimensions_text() == bdt
+    assert sbt1.beams_dimensions_text == bdt
 
 
 def test_top_add_rebars(sbt1):
@@ -227,7 +228,9 @@ def test_top_add_rebars(sbt1):
                  (8.4375, y2),
                  (8.4375, y1)
                  ])
-    assert sbt1.top_add_rebars == tars
+    _tars = sbt1.top_add_rebars
+    for i in range(3):
+        assert np.allclose(_tars[i], tars[i], rtol=.1)
 
 
 def test_bot_add_rebars(sbt1):

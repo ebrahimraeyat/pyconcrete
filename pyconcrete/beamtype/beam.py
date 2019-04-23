@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+# from dataclasses import dataclass
 from pyconcrete.point import Point
+# from dynaconf import settings
 
 
 class Beam:
@@ -33,6 +34,10 @@ class Beam:
         self.col_extend_dist = col_extend_dist
         self.console_extend_dist = console_extend_dist
         self.stirrup_dy = stirrup_dy
+        # self.first_stirrup_dist = settings.first_stirrup_dist
+        # self.col_extend_dist = settings.col_extend_dist
+        # self.console_extend_dist = settings.console_extend_dist
+        # self.stirrup_dy = settings.stirrup_dy
         self.id_ = id(self)
 
     @property

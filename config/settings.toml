@@ -1,0 +1,12 @@
+[default]
+first_stirrup_dist = 5
+col_extend_dist = 13.75
+console_extend_dist = 20
+stirrup_dy = 1.25
+
+[development]
+first_stirrup_dist = 5
+col_extend_dist = 13.75
+console_extend_dist = 20
+stirrup_dy = 1.25
+

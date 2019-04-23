@@ -1,3 +1,4 @@
+import copy
 from pyconcrete.beamtype.beamtype import BeamType
 from pyconcrete.beamtype import beam
 
@@ -21,9 +22,11 @@ class ScaleBeamType(BeamType):
                                 for i, j in self.beams_dimension]
 
     def _scale_column_width(self):
+        cw = {}
         for key in self.columns_width.keys():
-            self.columns_width[key] = [i / self.horizontal
-                                       for i in self.columns_width[key]]
+            cw[key] = [i / self.horizontal
+                       for i in self.columns_width[key]]
+        self.columns_width = cw
 
     def _scale_stirrup_len(self):
         stirrups_len = []
@@ -36,6 +39,14 @@ class ScaleBeamType(BeamType):
             else:
                 stirrups_len.append(i)
         self.stirrups_len = stirrups_len
+
+    def _scale_top_add_rebars(self):
+        scale_rebars = []
+        rebars = copy.deepcopy(self._top_add_rebars)
+        for rebar in rebars:
+            rebar.scale(self.horizontal, self.vertical)
+            scale_rebars.append(rebar)
+        self._top_add_rebars = scale_rebars
 
     def _scale_constant(self):
         self.extend_edge_len /= self.vertical
@@ -54,45 +65,10 @@ class ScaleBeamType(BeamType):
         self._scale_column_width()
         self._scale_stirrup_len()
         self._scale_constant()
-
-    def beams_dimensions_text(self):
-        bdt = []
-        for bd in self.beams_dimension:
-            width, height = bd
-            width = int(width * self.horizontal)
-            height = int(height * self.vertical)
-            text = f'{width}X{height}'
-            bdt.append(text)
-        return bdt
+        self._scale_top_add_rebars()
 
     @property
     def center_of_axis_circle_points(self):
         xs = self.axes_dist
         ys = len(xs) * [self.base_dim + 10 / self.vertical]  # constant 10: radius of circle
         return tuple(zip(xs, ys))
-
-    @property
-    def top_add_rebars(self):
-        tars = super().top_add_rebars
-        new_tars = []
-        for i in tars:
-            tmp = []
-            for j in i:
-                x = j[0] / self.horizontal
-                y = j[1] / self.vertical
-                tmp.append((x, y))
-            new_tars.append(tmp)
-        return new_tars
-
-    @property
-    def bot_add_rebars(self):
-        bars = super().bot_add_rebars
-        new_bars = []
-        for i in bars:
-            tmp = []
-            for j in i:
-                x = j[0] / self.horizontal
-                y = j[1] / self.vertical
-                tmp.append((x, y))
-            new_bars.append(tmp)
-        return new_bars

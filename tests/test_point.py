@@ -50,3 +50,7 @@ def test__sub__(p1, p2):
 def test_multiple_point(p1, p2):
     p3 = p1 + p2
     assert sum([p1, p2, p3]) == p.Point(0, 14)
+
+
+def test_div(p1):
+    assert p1 / 2 == p.Point(1, 1.5)

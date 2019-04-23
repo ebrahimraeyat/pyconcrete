@@ -1,23 +1,23 @@
 import pytest
+import numpy as np
 
 from pyconcrete.beamtype import beamtype as bt
 from pyconcrete.beamtype import beam as b
+from pyconcrete import rebar
 
 
 @pytest.fixture
 def bt1():
-    tars = []
-    y1 = -9.4
     y2 = -3.4
-    tars.append([(-11.25, y1),
-                 (-11.25, y2),
-                 (121, y2)])
-    tars.append([(175, y2),
-                 (485.7, y2)])
-    tars.append([(641, y2),
-                 (843.75, y2),
-                 (843.75, y1)
-                 ])
+    left_rebar = rebar.LRebar(length=132.2, insert=(-11.25, y2))
+    mid_rebar = rebar.Rebar(length=310.7, insert=(175, y2))
+    right_rebar = rebar.LRebar(length=202.75,
+                               h_align='right',
+                               insert=(641, y2))
+    tars = [left_rebar, mid_rebar, right_rebar]
+    # for r in (left_rebar, mid_rebar, right_rebar):
+    #     tars.append(r.points())
+
     bt1 = bt.BeamType(spans_len=[295, 540],
                       beams_dimension=[(40, 40), (40, 40)],
                       columns_width=dict(
@@ -142,7 +142,6 @@ def test_beams_dimensions_text(bt1):
 #     assert bt1.beams_dimensions_text() == bdt
 
 
-
 def test_max_beams_height(bt1):
     assert bt1.max_beams_height == 40
 
@@ -225,23 +224,6 @@ def test_top_add_rebar_points(bt1):
     pass
 
 
-# def test_scale(bt1, bt1_scale):
-#     assert bt1.scale == (1, 1)
-#     assert bt1_scale.scale == (75, 20)
-
-
-# def test_scaled_beamtype_type(bt1):
-#     bt1.scale = (75, 20)
-#     assert isinstance(bt1, bt.BeamType)
-#     assert hasattr(bt1, 'beams_dimensions_text')
-
-
-# def test_scaled_beams_dimensions_text(bt1):
-#     bdt = ['40X40', '40X40']
-#     bt1.scale = (75, 20)
-#     assert bt1.beams_dimensions_text() == bdt
-
-
 def test_top_add_rebars(bt1):
     tars = []
     y1 = -9.4
@@ -255,4 +237,6 @@ def test_top_add_rebars(bt1):
                  (843.75, y2),
                  (843.75, y1)
                  ])
-    assert bt1.top_add_rebars == tars
+    _tars = bt1.top_add_rebars
+    for i in range(3):
+        assert np.allclose(_tars[i], tars[i], rtol=.1)
