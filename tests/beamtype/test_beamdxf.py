@@ -34,7 +34,7 @@ def test_type_of_beam_dxf():
     dwg = ezdxf.new('AC1032')
     block = dwg.blocks.new(name='beam1')
     msp_beam = bdxf.BeamDxf(beam, block)
-    assert isinstance(msp_beam.msp, ezdxf.modern.layouts.BlockLayout)
+    assert isinstance(msp_beam.msp, ezdxf.layouts.blocklayout.BlockLayout)
 
 
 def test_top_bot_line_coordinates(beam1):

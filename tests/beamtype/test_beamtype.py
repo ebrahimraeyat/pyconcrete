@@ -4,6 +4,7 @@ import numpy as np
 from pyconcrete.beamtype import beamtype as bt
 from pyconcrete.beamtype import beam as b
 from pyconcrete import rebar
+from pyconcrete.point import Point
 
 
 @pytest.fixture
@@ -15,18 +16,15 @@ def bt1():
                                h_align='right',
                                insert=(641, y2))
     tars = [left_rebar, mid_rebar, right_rebar]
-    # for r in (left_rebar, mid_rebar, right_rebar):
-    #     tars.append(r.points())
 
     bt1 = bt.BeamType(spans_len=[295, 540],
                       beams_dimension=[(40, 40), (40, 40)],
-                      columns_width=dict(
-        bot=[45, 45, 40],
-        top=[40, 45, 40],),
-        stirrups_len=[None, [85, 85]],
-        axes_name=[('A', 1), ('B', 1), ('C', 1)],
-        top_add_rebars=tars,
-    )
+                      columns_width=dict(bot=[45, 45, 40],
+                                         top=[40, 45, 40],),
+                      stirrups_len=[None, [85, 85]],
+                      axes_name=[('A', 1), ('B', 1), ('C', 1)],
+                      top_add_rebars=tars,
+                      )
     return bt1
 
 
@@ -35,10 +33,8 @@ def b1():
     b1 = b.Beam(length=295,
                 width=40,
                 height=40,
-                columns_width=dict(
-                    bot=dict(left=45, right=45,),
-                    top=dict(left=40, right=45,),
-                ),
+                columns_width=dict(bot=dict(left=45, right=45,),
+                                   top=dict(left=40, right=45,),),
                 stirrup_len=None,
                 )
     return b1
@@ -49,32 +45,12 @@ def b2():
     b2 = b.Beam(length=540,
                 width=40,
                 height=40,
-                columns_width=dict(
-                    bot=dict(left=45, right=40,),
-                    top=dict(left=45, right=40,),
-                ),
+                columns_width=dict(bot=dict(left=45, right=40,),
+                                   top=dict(left=45, right=40,),),
                 stirrup_len=[85, 85],
                 dx=295,
                 )
     return b2
-
-
-# @pytest.fixture
-# def bt1_scale():
-#     '''
-#     scaled beamtype to h=75, v=20
-#     '''
-#     bt1 = bt.BeamType(spans_len=[295 / 75, 540 / 75],
-#                       beams_dimension=[(40 / 75, 40 / 20), (40 / 75, 40 / 20)],
-#                       columns_width=dict(
-#         bot=[45 / 75, 45 / 75, 40 / 75],
-#         top=[40 / 75, 45 / 75, 40 / 75],),
-#         stirrups_len=[None, [85 / 75, 85 / 75]],
-#         axes_name=[('A', 1), ('B', 1), ('C', 1)],
-#         horizontal_scale=75,
-#         vertical_scale=20,
-#     )
-#     return bt1
 
 
 def test_number_of_spans(bt1):
@@ -240,3 +216,25 @@ def test_top_add_rebars(bt1):
     _tars = bt1.top_add_rebars
     for i in range(3):
         assert np.allclose(_tars[i], tars[i], rtol=.1)
+
+
+def test_rebar_leader_points(bt1):
+    xs = bt1.axes_dist
+    y1, y2 = -3.4, 26.6
+    for x, _rebar in zip(xs, bt1._top_add_rebars):
+        x1 = x - bt1.leader_offcet
+        x2 = x1 - bt1.leader_dx
+        rlpts = ((x1, y1), (x1, y2), (x2, y2))
+        assert np.allclose(rlpts, bt1.rebar_leader_points(_rebar), rtol=.1)
+
+
+def test_rebar_target_point(bt1):
+    xs = bt1.axes_dist
+    for x, _rebar in zip(xs, bt1._top_add_rebars):
+        _x = x - bt1.leader_offcet
+        assert bt1.rebar_target_point(_rebar) == Point(_x, -3.4)
+
+
+# def test_leader_points(bt1):
+#     lpts = [(21.8, -3.4), (21.8, 26.6), (-50.22, 26.6)]
+#     assert np.allclose(lpts, bt1.leaders_points())

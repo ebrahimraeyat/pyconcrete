@@ -1,4 +1,5 @@
 import pytest
+import copy
 
 from pyconcrete import rebar
 
@@ -93,3 +94,29 @@ def test_text(r1, lr1, ur1):
     assert r1.text == '1~20'
     assert lr1.text == '2~20'
     assert ur1.text == '4~16'
+
+
+def test_text_len(r1, ur1):
+    assert r1.text_len == 'L=5'
+    assert ur1.text_len == 'L=200'
+    r_scale = copy.deepcopy(r1)
+    r_scale.scale(75, 20)
+    assert r_scale.text_len == 'L=5'
+
+
+def test_xy_level(r1, lr1, ur1):
+    assert r1.x1 == 0
+    assert r1.x2 == 5
+    assert r1.y == 0
+    assert ur1.x1 == 0
+    assert ur1.x2 == 200
+    assert ur1.y == 0
+    assert lr1.x1 == 10
+    assert lr1.x2 == 15
+    assert lr1.y == 20
+
+
+# def test_real_length(r1, lr1, ur1):
+#     assert r1.real_length == 5
+#     assert lr1.real_length == 200
+#     assert ur1.real_length == 250

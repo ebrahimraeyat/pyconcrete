@@ -4,6 +4,7 @@ import numpy as np
 from pyconcrete.beamtype import scalebeamtype as sbt
 from pyconcrete.beamtype import beam as b
 from pyconcrete import rebar
+from pyconcrete.point import Point
 
 horizontal = 100
 vertical = 20
@@ -201,7 +202,7 @@ def test_bot_main_rebar_points(sbt1):
 
 
 def test_center_of_axis_circle_points(sbt1):
-    coacps = ((0, 2.4), (2.95, 2.4), (8.35, 2.4))
+    coacps = ((0, 2.75), (2.95, 2.75), (8.35, 2.75))
     np.testing.assert_allclose(sbt1.center_of_axis_circle_points, coacps)
 
 
@@ -235,3 +236,22 @@ def test_top_add_rebars(sbt1):
 
 def test_bot_add_rebars(sbt1):
     assert sbt1.bot_add_rebars == []
+
+
+def test_rebar_target_point(sbt1):
+    xs = sbt1.axes_dist
+    # for x, _rebar in zip(xs, sbt1._top_add_rebars):
+    x = xs[0]
+    _rebar = sbt1._top_add_rebars[0]
+    _x = x - sbt1.leader_offcet
+    assert sbt1.rebar_target_point(_rebar) == Point(_x, -.17)
+
+
+# def test_rebar_leader_points(bt1):
+#     xs = bt1.axes_dist
+#     y1, y2 = -3.4, 26.6
+#     for x, _rebar in zip(xs, bt1._top_add_rebars):
+#         x1 = x - bt1.leader_offcet
+#         x2 = x1 - bt1.leader_dx
+#         rlpts = ((x1, y1), (x1, y2), (x2, y2))
+#         assert np.allclose(rlpts, bt1.rebar_leader_points(_rebar), rtol=.1)

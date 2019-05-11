@@ -1,6 +1,7 @@
 import ezdxf
 
 from pyconcrete.beamtype import beamtype as bt
+from pyconcrete.point import Point
 
 
 class BeamTypeDxf:
@@ -26,7 +27,7 @@ class BeamTypeDxf:
 
     def add_axes_polyline(self):
         for pt in self.beamtype.axes_polyline_points:
-            self.block.add_polyline2d(pt, dxfattribs={'color': 2})
+            self.block.add_polyline2d(pt, dxfattribs={'color': 2, 'linetype': 'HIDDEN2'})
 
     def add_stirrups(self):
         for st in self.beamtype.stirrups_points:
@@ -44,9 +45,10 @@ class BeamTypeDxf:
             self.block.add_text(
                 t,
                 dxfattribs={
-                'color': 2,
-                'height': 5 / self.beamtype.vertical,
-                'style': 'SAZE_STYLE1',}  # constant
+                    'color': 2,
+                    'style': 'SAZE_STYLE1',
+                    'height': 4 / self.beamtype.vertical,  # constant
+                }
             ).set_pos(p, align='BOTTOM_CENTER')
 
     def add_dim_lines(self):
@@ -79,8 +81,8 @@ class BeamTypeDxf:
             self.block.add_text(
                 t,
                 dxfattribs={'color': 3,
-                'height': 8 / self.beamtype.vertical, # constant
-                'style': 'SAZE_STYLE1',}  # constant
+                            'height': 8 / self.beamtype.vertical,  # constant
+                            'style': 'SAZE_STYLE1', }  # constant
             ).set_pos(pt, align='MIDDLE_CENTER')
 
     def add_top_add_rebars(self):
@@ -91,11 +93,39 @@ class BeamTypeDxf:
         for pt in self.beamtype.bot_add_rebars:
             self.block.add_polyline2d(pt, dxfattribs={'color': 6})
 
+    def add_leaders(self):
+        leaders_points = self.beamtype.leaders_points()
+        rebars = self.beamtype._top_add_rebars + self.beamtype._bot_add_rebars
+        for _rebar, pt in zip(rebars, leaders_points):
+            self.block.add_leader(vertices=pt, dxfattribs={'color': 2})
+            p1, p2 = self.leader_texts_pos(pt[1])
+            self.block.add_text(_rebar.text, dxfattribs={'color': 3,
+                                                         # 'style': 'OpenSans',
+                                                         'height': 4 / self.beamtype.vertical,
+                                                         }).set_pos(p1, align='BOTTOM_RIGHT')
+            self.block.add_text(_rebar.text_len, dxfattribs={'color': 2,
+                                                             # 'style': 'OpenSans',
+                                                             'height': 4 / self.beamtype.vertical,
+                                                             }).set_pos(p2, align='TOP_RIGHT')
+
+            # msp.add_text('Text', dxfattribs={
+            #     'style': 'OpenSans',
+            #     'height': .25,
+            # }).set_pos((2, 5), align='BOTTOM_LEFT')
+
+    def leader_texts_pos(self, p):
+        p1 = Point(*p)
+        x = 10 / self.beamtype.horizontal
+        y = 2 / self.beamtype.vertical
+        top_point = p1 - Point(x, 0)
+        bot_point = p1 - Point(x, y)
+        return tuple(top_point), tuple(bot_point)
+
     def to_dxf(self):
         self.add_top_polylines()
         self.add_bot_polylines()
         self.add_edges_polyline()
-        # self.add_axes_polyline()
+        self.add_axes_polyline()
         self.add_stirrups()
         self.add_texts_dimension()
         self.add_dim_lines()
@@ -106,3 +136,4 @@ class BeamTypeDxf:
         self.add_axes_dim()
         self.add_top_add_rebars()
         self.add_bot_add_rebars()
+        self.add_leaders()

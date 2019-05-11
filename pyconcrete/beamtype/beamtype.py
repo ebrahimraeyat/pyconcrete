@@ -2,6 +2,8 @@
 import uuid
 
 from pyconcrete.beamtype import beam
+from pyconcrete.point import Point
+from pyconcrete.rebar import Rebar
 
 
 class BeamType:
@@ -12,7 +14,7 @@ class BeamType:
                  stirrups_len: list,
                  axes_name: list,
                  extend_edge_len: int = 50,
-                 base_dim: int = 38,
+                 base_dim: int = 45,  # 38,
                  extend_main_rebar: int = 6,
                  main_rebar_dx: int = 6,
                  main_rebar_dy: int = 2,
@@ -20,6 +22,9 @@ class BeamType:
                  col_extend_dist=13.75,
                  console_extend_dist=20,
                  stirrup_dy=1.25,
+                 leader_dx=72,
+                 leader_dy=30,
+                 leader_offcet=5.5,
                  # top_main_rebars: dict = None,
                  # bot_main_rebars: dict = None,
                  top_add_rebars: list = [],
@@ -41,6 +46,9 @@ class BeamType:
         self.col_extend_dist = col_extend_dist
         self.console_extend_dist = console_extend_dist
         self.stirrup_dy = stirrup_dy
+        self.leader_dx = leader_dx
+        self.leader_dy = leader_dy
+        self.leader_offcet = leader_offcet
         self._top_add_rebars = top_add_rebars
         self._bot_add_rebars = bot_add_rebars
         self.uid = str(uuid.uuid4().int)
@@ -247,8 +255,38 @@ class BeamType:
 
     @property
     def bot_add_rebars(self):
-        return self._bot_add_rebars
+        bar_points = []
+        for rebar in self._bot_add_rebars:
+            bar_points.append(rebar.points())
+        return bar_points
 
     @bot_add_rebars.setter
     def bot_add_rebars(self):
         pass
+
+    def rebar_target_point(self, rebar):
+        xs = self.axes_dist
+        x1, x2, y = rebar.x1, rebar.x2, rebar.y
+        for x in xs:
+            if x1 < x < x2:
+                return Point(x - self.leader_offcet, y)
+        return Point(*rebar.points_along()[0])
+
+    def rebar_leader_points(self, rebar):
+        if rebar.v_align == 'top':
+            dy = self.leader_dy
+        elif rebar.v_align == 'bot':
+            dy = -self.leader_dy
+
+        p1 = self.rebar_target_point(rebar)
+        p2 = p1.plusy(dy)
+        p3 = p2.plusx(-self.leader_dx)
+        return tuple(p1), tuple(p2), tuple(p3)
+
+    def leaders_points(self):
+        lpts = []
+        for rebar in self._top_add_rebars:
+            lpts.append(self.rebar_leader_points(rebar))
+        for rebar in self._bot_add_rebars:
+            lpts.append(self.rebar_leader_points(rebar))
+        return lpts

@@ -48,6 +48,14 @@ class ScaleBeamType(BeamType):
             scale_rebars.append(rebar)
         self._top_add_rebars = scale_rebars
 
+    def _scale_bot_add_rebars(self):
+        scale_rebars = []
+        rebars = copy.deepcopy(self._bot_add_rebars)
+        for rebar in rebars:
+            rebar.scale(self.horizontal, self.vertical)
+            scale_rebars.append(rebar)
+        self._bot_add_rebars = scale_rebars
+
     def _scale_constant(self):
         self.extend_edge_len /= self.vertical
         self.base_dim /= self.vertical
@@ -58,6 +66,9 @@ class ScaleBeamType(BeamType):
         self.col_extend_dist /= self.vertical
         self.console_extend_dist /= self.horizontal
         self.stirrup_dy /= self.vertical
+        self.leader_dx /= self.horizontal
+        self.leader_dy /= self.vertical
+        self.leader_offcet /= self.horizontal
 
     def scale(self):
         self._scale_spans_len()
@@ -66,6 +77,7 @@ class ScaleBeamType(BeamType):
         self._scale_stirrup_len()
         self._scale_constant()
         self._scale_top_add_rebars()
+        self._scale_bot_add_rebars()
 
     @property
     def center_of_axis_circle_points(self):

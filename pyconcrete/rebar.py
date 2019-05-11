@@ -11,13 +11,28 @@ class Rebar:
                  diameter: int=20,
                  count: int=1,
                  insert: tuple=(0, 0),
+                 v_align: str='top',    # top, bot
                  extend_main_rebar: int = 6,
                  ):
         self.length = length
         self.diameter = diameter
         self.count = count
         self.insert = insert
+        self.v_align = v_align
         self.extend_main_rebar = extend_main_rebar
+        self.text_len = self._text_len()
+
+    @property
+    def x1(self):
+        return self.base_points()[0][0]
+
+    @property
+    def x2(self):
+        return self.base_points()[1][0]
+
+    @property
+    def y(self):
+        return self.insert[1]
 
     def scale(self, h, v):
         self.length /= h
@@ -57,8 +72,15 @@ class Rebar:
         '''
         return f'{self.count}~{self.diameter}'
 
+    def _text_len(self):
+        return f'L={self.real_length:.0f}'
+
+    @property
+    def real_length(self):
+        return self.length
+
     def __repr__(self):
-        return f'{self.text}, L={self.length}'
+        return f'{self.text}, L={self.real_length}'
 
 
 class LRebar(Rebar):
@@ -68,13 +90,12 @@ class LRebar(Rebar):
     '''
 
     def __init__(self,
-                 v_align: str='top',    # top, bot
                  h_align: str='left',    # left, right
                  *args,
                  **kwargs,
                  ):
         super().__init__(*args, **kwargs)
-        self.v_align = v_align
+        # self.v_align = v_align
         self.h_align = h_align
 
     def points(self):
@@ -104,12 +125,10 @@ class URebar(Rebar):
     '''
 
     def __init__(self,
-                 v_align: str='top',
                  *args,
                  **kwargs
                  ):
         super().__init__(*args, **kwargs)
-        self.v_align = v_align
 
     def points(self):
         p2, p3 = super().points()
