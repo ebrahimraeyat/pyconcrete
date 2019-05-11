@@ -75,7 +75,6 @@ prop5 = dict(spans_len=[295, 540],
     axes_name=[('A', 1), ('B', 1), ('C', 1)],
     top_add_rebars=tars,)
 
-
 props = (prop1, prop2, prop3, prop4, prop5)
 
 # scaled beamtype h=100, v=25
@@ -106,9 +105,12 @@ new_dwg.saveas('/home/ebi/beamtype75.dxf')
 
 ## output
 
-This is output at peresent, but I'll add scale parameter and styles to seems look better!
+This is output at peresent, but I'll add styles to seems look better!
 
-![image](https://user-images.githubusercontent.com/8196112/56585647-7f608100-65f3-11e9-935b-eab13693b2d8.png)
+
+![image](https://user-images.githubusercontent.com/8196112/57562900-82f25700-73ac-11e9-8137-ed819e3b7a66.png)
+
+
 
 
 
