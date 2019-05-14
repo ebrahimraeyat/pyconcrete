@@ -27,8 +27,8 @@ from pyconcrete.beamtype import beamtype, scalebeamtype, beamtypedxf
 from pyconcrete import rebar
 
 y2 = -3.4
-left_rebar = rebar.LRebar(length=132.2, insert=(-11.25, y2))
-mid_rebar = rebar.Rebar(length=310.7, insert=(175, y2))
+left_rebar = rebar.LRebar(count=2, length=132.2, insert=(-11.25, y2))
+mid_rebar = rebar.Rebar(count=3, diameter=16, length=310.7, insert=(175, y2))
 right_rebar = rebar.LRebar(length=202.75,
                            h_align='right',
                            insert=(641, y2))
