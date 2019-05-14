@@ -28,6 +28,8 @@ def sbt1():
                                  bot=[45, 45, 40],
                                  top=[40, 45, 40],),
                              stirrups_len=[None, [85, 85]],
+                             stirrup_at=[(8.5,), (8.5, 17, 8.5)],
+                             stirrup_size=(8, 8),
                              axes_name=[('A', 1), ('B', 1), ('C', 1)],
                              top_add_rebars=tars,
                              )
@@ -245,6 +247,19 @@ def test_rebar_target_point(sbt1):
     _rebar = sbt1._top_add_rebars[0]
     _x = x - sbt1.leader_offcet
     assert sbt1.rebar_target_point(_rebar) == Point(_x, -.17)
+
+
+def test_stirrups_dist(sbt1):
+    assert sbt1.stirrups_dist == [[240], [85, 317.5, 85]]
+
+
+def test_stirrup_at(sbt1):
+    assert sbt1.stirrup_at == [(8.5,), (8.5, 17, 8.5)]
+
+
+def test_stirrup_text(sbt1):
+    st = ['29~8@8.5', '11~8@8.5', '18~8@17', '11~8@8.5']
+    assert sbt1.stirrups_text == st
 
 
 # def test_rebar_leader_points(bt1):

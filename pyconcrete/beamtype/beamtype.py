@@ -13,6 +13,8 @@ class BeamType:
                  columns_width: dict,
                  stirrups_len: list,
                  axes_name: list,
+                 stirrup_at: list=None,
+                 stirrup_size: tuple=None,
                  extend_edge_len: int = 50,
                  base_dim: int = 45,  # 38,
                  extend_main_rebar: int = 6,
@@ -35,6 +37,8 @@ class BeamType:
         self.beams_dimension = beams_dimension
         self.columns_width = columns_width
         self.stirrups_len = stirrups_len
+        self.stirrup_at = stirrup_at
+        self.stirrup_size = stirrup_size
         self.axes_name = axes_name
         self.extend_edge_len = extend_edge_len
         self.base_dim = base_dim
@@ -54,6 +58,8 @@ class BeamType:
         self.uid = str(uuid.uuid4().int)
         self.spans_len_text = self._spans_len_text()
         self.beams_dimensions_text = self._beams_dimensions_text()
+        self.stirrups_dist = self._stirrups_dist()
+        self.stirrups_text = self._stirrups_text()
 
     def _spans_len_text(self):
         slt = []
@@ -96,6 +102,8 @@ class BeamType:
                           height=height,
                           columns_width=cw,
                           stirrup_len=stirrup_len,
+                          stirrup_at=self.stirrup_at[i],
+                          stirrup_size=self.stirrup_size[i],
                           dx=dx,
                           is_first=is_first,
                           is_last=is_last,
@@ -200,6 +208,13 @@ class BeamType:
         return sps
 
     @property
+    def stirrup_dim_points(self):
+        sdps = []
+        for beam in self.beams:
+            sdps += beam.stirrup_dim_points
+        return sdps
+
+    @property
     def edges_polyline_points(self):
         b1, b2 = self.beams[0], self.beams[-1]
         epps = []
@@ -290,3 +305,34 @@ class BeamType:
         for rebar in self._bot_add_rebars:
             lpts.append(self.rebar_leader_points(rebar))
         return lpts
+
+    def _stirrups_dist(self):
+        ssd = []
+        for beam in self.beams:
+            ssd.append(beam.stirrups_len)
+        return ssd
+
+    def stirrup_count(self, stirrup_at, stirrups_len):
+        sc = []
+        l = len(stirrup_at)
+        sc.append(int(stirrups_len[0] / stirrup_at[0]) + 1)
+
+        if l == 3:
+            sc.append(int(stirrups_len[1] / stirrup_at[1]))
+            sc.append(int(stirrups_len[2] / stirrup_at[2]) + 1)
+        return sc
+
+    @property
+    def stirrups_count(self):
+        ssc = []
+        for i, j in zip(self.stirrup_at, self.stirrups_dist):
+            ssc.append(self.stirrup_count(i, j))
+        return ssc
+
+    def _stirrups_text(self):
+        texts = []
+        for a, b, c in zip(self.stirrups_count, self.stirrup_at, self.stirrup_size):
+            for d, e in zip(a, b):
+                texts.append(f'{d}~{c}@{e}')
+
+        return texts

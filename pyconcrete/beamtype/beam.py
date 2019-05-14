@@ -12,6 +12,8 @@ class Beam:
                  height,
                  columns_width,
                  stirrup_len=None,
+                 stirrup_at=None,
+                 stirrup_size: int=8,
                  dx=0,
                  dy=0,
                  is_first=False,
@@ -26,6 +28,8 @@ class Beam:
         self.height = height
         self.columns_width = columns_width
         self.stirrup_len = stirrup_len
+        self.stirrup_at = stirrup_at
+        self.stirrup_size = stirrup_size
         self.dx = dx
         self.dy = dy
         self.is_first = is_first
@@ -96,7 +100,7 @@ class Beam:
         return coordinates
 
     @property
-    def stirrups_dist(self):
+    def stirrups_x(self):
         dx1 = self.columns_width['bot']['left']
         if dx1 == 0:
             dx1 = self.columns_width['top']['left']
@@ -110,7 +114,8 @@ class Beam:
             x1 = dx1 / 2 + self.first_stirrup_dist + self.dx
             x2 = x1 + self.stirrup_len[0]
             x4 = self.length - dx2 / 2 - self.first_stirrup_dist + self.dx
-            x3 = self.length - dx2 / 2 - self.stirrup_len[1] + self.dx
+            x3 = x4 - self.stirrup_len[1]
+            # x3 = self.length - dx2 / 2 - self.stirrup_len[1] + self.dx
         return [x1, x2, x3, x4]
 
     @property
@@ -118,7 +123,7 @@ class Beam:
         y1 = -self.stirrup_dy
         y2 = -self.height + self.stirrup_dy
         sp = []
-        for x in self.stirrups_dist:
+        for x in self.stirrups_x:
             sp.append([(x, y1), (x, y2)])
         return sp
 
@@ -217,9 +222,37 @@ class Beam:
     @property
     def stirrup_dim_points(self):
         y = -self.height / 2  # can be constant in future
-        xs = self.stirrups_dist
-        zip_ = zip(xs[:-1], xs[1:])
+        xs = self.stirrups_x
         sdps = []
-        for xi, xj in zip_:
+        for xi, xj in zip(xs[:-1], xs[1:]):
             sdps.append([(xi, y), (xj, y)])
         return sdps
+
+    @property
+    def stirrups_len(self):
+        xs = self.stirrups_x
+        ssl = []
+        for xi, xj in zip(xs[:-1], xs[1:]):
+            ssl.append(xj - xi)
+        return ssl
+
+    @property
+    def stirrup_counts(self):
+        sc = []
+        l = len(self.stirrup_at)
+        sc.append(int(self.stirrups_len[0] / self.stirrup_at[0]) + 1)
+
+        if l == 3:
+            sc.append(int(self.stirrups_len[1] / self.stirrup_at[1]))
+            sc.append(int(self.stirrups_len[2] / self.stirrup_at[2]) + 1)
+        return sc
+
+    @property
+    def stirrup_text(self):
+        st = []
+        for i, j in zip(self.stirrup_counts, self.stirrup_at):
+            st.append(f'{i}~{self.stirrup_size}@{j}')
+        return st
+
+    # @property
+    # def stirrup_counts(self):

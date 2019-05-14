@@ -70,6 +70,12 @@ class ScaleBeamType(BeamType):
         self.leader_dy /= self.vertical
         self.leader_offcet /= self.horizontal
 
+    def _scale_stirrup_at(self):
+        sa = []
+        for i in self.stirrup_at:
+            sa.append(tuple(j for j in i))
+        self.stirrup_at = sa
+
     def scale(self):
         self._scale_spans_len()
         self._scale_beams_dimension()
@@ -78,6 +84,7 @@ class ScaleBeamType(BeamType):
         self._scale_constant()
         self._scale_top_add_rebars()
         self._scale_bot_add_rebars()
+        self._scale_stirrup_at()
 
     @property
     def center_of_axis_circle_points(self):

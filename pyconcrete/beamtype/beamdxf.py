@@ -25,8 +25,8 @@ class BeamDxf:
         self.msp.add_lwpolyline([p3, p4], dxfattribs={'color': 3})
 
     def _left_rigth_stirrups_to_dxf(self):
-        x1 = self.stirrups_dist[0]
-        x2 = self.stirrups_dist[-1]
+        x1 = self.stirrups_x[0]
+        x2 = self.stirrups_x[-1]
         y1 = self.coordinates['bot']['left'][1] + self.first_stirrup_dist
         y2 = self.coordinates['top']['left'][1] - self.first_stirrup_dist
         left_points = [(x1, y1), (x1, y2)]
@@ -47,8 +47,8 @@ class BeamDxf:
         return self.beam.coordinates
 
     @property
-    def stirrups_dist(self):
-        return self.beam.stirrups_dist
+    def stirrups_x(self):
+        return self.beam.stirrups_x
 
     @property
     def first_stirrup_dist(self):

@@ -22,6 +22,8 @@ def bt1():
                       columns_width=dict(bot=[45, 45, 40],
                                          top=[40, 45, 40],),
                       stirrups_len=[None, [85, 85]],
+                      stirrup_at=[(8.5,), (8.5, 17, 8.5)],
+                      stirrup_size=(8, 8),
                       axes_name=[('A', 1), ('B', 1), ('C', 1)],
                       top_add_rebars=tars,
                       )
@@ -233,6 +235,19 @@ def test_rebar_target_point(bt1):
     for x, _rebar in zip(xs, bt1._top_add_rebars):
         _x = x - bt1.leader_offcet
         assert bt1.rebar_target_point(_rebar) == Point(_x, -3.4)
+
+
+def test_stirrups_dist(bt1):
+    assert bt1.stirrups_dist == [[240], [85, 317.5, 85]]
+
+
+def test_stirrups_count(bt1):
+    assert bt1.stirrups_count == [[29], [11, 18, 11]]
+
+
+def test_stirrups_text(bt1):
+    st = ['29~8@8.5', '11~8@8.5', '18~8@17', '11~8@8.5']
+    assert bt1.stirrups_text == st
 
 
 # def test_leader_points(bt1):

@@ -14,13 +14,13 @@ def beam1():
         top=dict(left=p1, right=p2,),
         bot=dict(left=p3, right=p4,)
     )
-    __stirrups_dist = [30, 115, 380, 460]
+    __stirrups_x = [30, 115, 380, 460]
     __columns_width = dict(
         bot=dict(left=50, right=40,),
         top=dict(left=40, right=35,),
     )
     return dict(coordinates=__coordinates,
-                stirrups_dist=__stirrups_dist,
+                stirrups_x=__stirrups_x,
                 columns_width=__columns_width,
                 first_stirrup_dist=5,
                 width=40,

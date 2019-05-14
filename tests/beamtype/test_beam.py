@@ -15,6 +15,8 @@ def _beam():
                   bot=dict(left=50, right=40,),
                   top=dict(left=40, right=35,),),
               stirrup_len=[85, 85],
+              stirrup_at=[8.5, 17, 8.5],
+              stirrup_size=8,
               )
   return b1
 
@@ -41,6 +43,8 @@ def _b3():
                   bot=dict(left=0, right=0,),
                   top=dict(left=0, right=0,),),
               stirrup_len=None,
+              stirrup_at=[8.5],
+              stirrup_size=8,
               )
   return b3
 
@@ -96,12 +100,12 @@ def test_beam_coordinates(_beam):
 
 
 def test_stirrup_3_state(_beam):
-  stirrups_dist = [30, 115, 380, 460]
-  assert _beam.stirrups_dist == stirrups_dist
+  stirrups_x = [30, 115, 375, 460]
+  assert _beam.stirrups_x == stirrups_x
 
 
 def test_uniform_stirrup(_beam_with_uniform_stirrup):
-  assert _beam_with_uniform_stirrup.stirrups_dist == [30, 460]
+  assert _beam_with_uniform_stirrup.stirrups_x == [30, 460]
 
 
 def test_stirrup_points(_beam):
@@ -110,7 +114,7 @@ def test_stirrup_points(_beam):
   sp = [
       [(30, y1), (30, y2)],
       [(115, y1), (115, y2)],
-      [(380, y1), (380, y2)],
+      [(375, y1), (375, y2)],
       [(460, y1), (460, y2)],
   ]
   assert _beam.stirrup_points == sp
@@ -215,8 +219,8 @@ def test_stirrup_dim_points(_beam, _beam_with_uniform_stirrup):
   y = -22.5
   sdps = [
       [(30, y), (115, y)],
-      [(115, y), (380, y)],
-      [(380, y), (460, y)]
+      [(115, y), (375, y)],
+      [(375, y), (460, y)]
   ]
   assert _beam.stirrup_dim_points == sdps
   assert _beam_with_uniform_stirrup.stirrup_dim_points == [[(30, y), (460, y)]]
@@ -226,3 +230,21 @@ def test_uniform_stirrup_dim_points(_beam_with_uniform_stirrup):
   y = -22.5
   sdps = [[(30, y), (460, y)]]
   assert _beam_with_uniform_stirrup.stirrup_dim_points == sdps
+
+
+def test_stirrups_len(_beam):
+  assert _beam.stirrups_len == [85, 260, 85]
+
+
+def test_stirrup_counts(_beam):
+  assert _beam.stirrup_counts == [11, 15, 11]
+
+
+def test_stirrup_text(_beam):
+  st = ['11~8@8.5', '15~8@17', '11~8@8.5']
+  assert _beam.stirrup_text == st
+# def test_len_stirrup_prop(_beam, _b3):
+#   for beam in [_beam, _b3]:
+#     l1 = len(beam.stirrup_at)
+#     l
+#     assert l1 == l2

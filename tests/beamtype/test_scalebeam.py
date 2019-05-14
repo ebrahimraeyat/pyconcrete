@@ -114,12 +114,12 @@
 
 
 # # def test_stirrup_3_state(_beam):
-# #     stirrups_dist = [.30, 1.15, 3.80, 4.60]
-# #     assert _beam.stirrups_dist == stirrups_dist
+# #     stirrups_x = [.30, 1.15, 3.80, 4.60]
+# #     assert _beam.stirrups_x == stirrups_x
 
 
 # # def test_uniform_stirrup(_beam_with_uniform_stirrup):
-# #     assert _beam_with_uniform_stirrup.stirrups_dist == [.30, 4.60]
+# #     assert _beam_with_uniform_stirrup.stirrups_x == [.30, 4.60]
 
 
 # # def test_stirrup_points(_beam):

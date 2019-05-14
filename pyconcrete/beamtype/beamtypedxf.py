@@ -121,6 +121,28 @@ class BeamTypeDxf:
         bot_point = p1 - Point(x, y)
         return tuple(top_point), tuple(bot_point)
 
+    def add_stirrup_dim_lines(self):
+        texts = self.beamtype.stirrups_text
+        d = - 20 / self.beamtype.vertical
+        for t, pt in zip(texts, self.beamtype.stirrup_dim_points):
+            self.block.add_aligned_dim(
+                *pt,
+                d,
+                text=t,
+                dimstyle='STIRRUP_DIM_STYLE')
+
+    def add_stirrup_len_text(self):
+        texts = []
+        for i in self.beamtype.stirrups_dist:
+            texts += i
+        d = -self.beamtype.max_beams_height - 7 / self.beamtype.vertical
+        for t, pt in zip(texts, self.beamtype.stirrup_dim_points):
+            self.block.add_aligned_dim(
+                *pt,
+                d,
+                text=int(t),
+                dimstyle='STIRRUP_LEN_STYLE')
+
     def to_dxf(self):
         self.add_top_polylines()
         self.add_bot_polylines()
@@ -137,3 +159,5 @@ class BeamTypeDxf:
         self.add_top_add_rebars()
         self.add_bot_add_rebars()
         self.add_leaders()
+        self.add_stirrup_dim_lines()
+        self.add_stirrup_len_text()
