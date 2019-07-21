@@ -72,7 +72,7 @@ props = (prop1, prop4, prop5)
 # props = (prop1, prop2, prop3, prop4, prop5)
 
 # scaled beamtype h=100, v=25
-new_dwg = ezdxf.readfile('/home/ebi/TEMPLATE.dxf')
+new_dwg = ezdxf.readfile('pyconcrete/TEMPLATE.dxf')
 msp = new_dwg.modelspace()
 h = 100
 v = 25
@@ -84,7 +84,7 @@ for i, prop in enumerate(props):
 new_dwg.saveas('/home/ebi/beamtype100.dxf')
 
 # scaled beamtype h=75, v=20
-new_dwg = ezdxf.readfile('/home/ebi/TEMPLATE.dxf')
+new_dwg = ezdxf.readfile('pyconcrete/TEMPLATE.dxf')
 msp = new_dwg.modelspace()
 h = 75
 v = 20

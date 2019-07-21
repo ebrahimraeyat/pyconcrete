@@ -16,7 +16,7 @@ class BeamType:
                  stirrup_at: list=None,
                  stirrup_size: tuple=None,
                  extend_edge_len: int = 50,
-                 base_dim: int = 45,  # 38,
+                 base_dim: int = 42,  # 38,
                  extend_main_rebar: int = 6,
                  main_rebar_dx: int = 6,
                  main_rebar_dy: int = 2,
@@ -137,7 +137,8 @@ class BeamType:
         a list of tuples
         '''
         y1 = -(self.max_beams_height + self.extend_edge_len)
-        y2 = self.extend_edge_len
+        y2 = self.base_dim
+        # y2 = self.extend_edge_len
         app = []
         for i in range(self.__len__() + 1):
             x = self.axes_dist[i]

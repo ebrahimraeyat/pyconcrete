@@ -122,7 +122,7 @@ def test_is_end_console(sbt1):
 
 def test_axes_polyline_points(sbt1):
     x1, x2, x3 = 0, 2.95, 2.95 + 5.40
-    y1, y2 = -4.5, 2.5
+    y1, y2 = -4.5, 2.1
     app = [
         [(x1, y1), (x1, y2)],
         [(x2, y1), (x2, y2)],
@@ -204,7 +204,8 @@ def test_bot_main_rebar_points(sbt1):
 
 
 def test_center_of_axis_circle_points(sbt1):
-    coacps = ((0, 2.75), (2.95, 2.75), (8.35, 2.75))
+    y = 2.6
+    coacps = ((0, 2.6), (2.95, 2.6), (8.35, 2.6))
     np.testing.assert_allclose(sbt1.center_of_axis_circle_points, coacps)
 
 

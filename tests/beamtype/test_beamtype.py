@@ -105,7 +105,7 @@ def test_is_end_console(bt1):
 
 def test_axes_polyline_points(bt1):
     x1, x2, x3 = 0, 295, 295 + 540
-    y1, y2 = -90, 50
+    y1, y2 = -90, 42
     app = [
         [(x1, y1), (x1, y2)],
         [(x2, y1), (x2, y2)],
