@@ -59,7 +59,7 @@ prop5 = dict(spans_len=[295, 540],
 props = (prop5,)
 
 # scaled beamtype h=75, v=20
-new_dwg = ezdxf.readfile('/home/ebi/TEMPLATE.dxf')
+new_dwg = ezdxf.readfile('pyconcrete/TEMPLATE.dxf')
 msp = new_dwg.modelspace()
 h = 75
 v = 20
@@ -68,7 +68,7 @@ for i, prop in enumerate(props):
     btdxf = beamtypedxf.BeamTypeDxf(sbt, new_dwg)
     btdxf.to_dxf()
     msp.add_blockref(sbt.uid, (200 / h, i * 130 / v))
-new_dwg.saveas('/home/ebi/beamtype75.dxf')
+new_dwg.saveas('beamtype75.dxf')
 ```
 
 
