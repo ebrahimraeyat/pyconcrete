@@ -4,6 +4,7 @@ from pyconcrete.beamtype import beamtype as bt
 from pyconcrete.point import Point
 
 
+
 class BeamTypeDxf:
     def __init__(self,
                  beamtype: bt.BeamType,
@@ -49,7 +50,7 @@ class BeamTypeDxf:
                     'style': 'SAZE_STYLE1',
                     'height': 4 / self.beamtype.vertical,  # constant
                 }
-            ).set_pos(p, align='BOTTOM_CENTER')
+            ).set_placement(p, None, align=ezdxf.enums.TextEntityAlignment.BOTTOM_CENTER)
 
     def add_dim_lines(self):
         d = self.beamtype.base_dim - 8 / self.beamtype.vertical
@@ -60,14 +61,6 @@ class BeamTypeDxf:
                 text=self.beamtype.spans_len_text[i],
                 dimstyle='SAZE_DIM_STYLE',
                 dxfattribs={'color': 2, })
-
-    def add_top_main_rebar(self):
-        pts = self.beamtype.top_main_rebar_points
-        self.block.add_polyline2d(pts, dxfattribs={'color': 6})
-
-    def add_bot_main_rebar(self):
-        pts = self.beamtype.bot_main_rebar_points
-        self.block.add_polyline2d(pts, dxfattribs={'color': 6})
 
     def add_axes_circle(self):
         for pt in self.beamtype.center_of_axis_circle_points:
@@ -83,35 +76,46 @@ class BeamTypeDxf:
                 dxfattribs={'color': 3,
                             'height': 8 / self.beamtype.vertical,  # constant
                             'style': 'SAZE_STYLE1', }  # constant
-            ).set_pos(pt, align='MIDDLE_CENTER')
+            ).set_placement(pt, None, align=ezdxf.enums.TextEntityAlignment.MIDDLE_CENTER)
 
     def add_top_add_rebars(self):
         for pt in self.beamtype.top_add_rebars:
             self.block.add_polyline2d(pt, dxfattribs={'color': 6})
-
+    
     def add_bot_add_rebars(self):
         for pt in self.beamtype.bot_add_rebars:
+            self.block.add_polyline2d(pt, dxfattribs={'color': 6})
+    
+    def add_top_main_rebars(self):
+        for pt in self.beamtype.top_main_rebars:
+            self.block.add_polyline2d(pt, dxfattribs={'color': 6})
+
+    def add_bot_main_rebars(self):
+        for pt in self.beamtype.bot_main_rebars:
             self.block.add_polyline2d(pt, dxfattribs={'color': 6})
 
     def add_leaders(self):
         leaders_points = self.beamtype.leaders_points()
-        rebars = self.beamtype._top_add_rebars + self.beamtype._bot_add_rebars
+        rebars = self.beamtype._top_add_rebars + \
+            self.beamtype._bot_add_rebars + \
+            self.beamtype._top_main_rebars + \
+            self.beamtype._bot_main_rebars
         for _rebar, pt in zip(rebars, leaders_points):
             self.block.add_leader(vertices=pt, dxfattribs={'color': 2})
             p1, p2 = self.leader_texts_pos(pt[1])
             self.block.add_text(_rebar.text, dxfattribs={'color': 3,
                                                          # 'style': 'OpenSans',
                                                          'height': 4 / self.beamtype.vertical,
-                                                         }).set_pos(p1, align='BOTTOM_RIGHT')
+                                                         }).set_placement(p1, None, align=ezdxf.enums.TextEntityAlignment.BOTTOM_RIGHT)
             self.block.add_text(_rebar.text_len, dxfattribs={'color': 2,
                                                              # 'style': 'OpenSans',
                                                              'height': 4 / self.beamtype.vertical,
-                                                             }).set_pos(p2, align='TOP_RIGHT')
+                                                             }).set_placement(p2, None, align=ezdxf.enums.TextEntityAlignment.TOP_RIGHT)
 
             # msp.add_text('Text', dxfattribs={
             #     'style': 'OpenSans',
             #     'height': .25,
-            # }).set_pos((2, 5), align='BOTTOM_LEFT')
+            # })..set_placement((2, 5), align=ezdxf.enums.TextEntityAlignment.BOTTOM_LEFT)
 
     def leader_texts_pos(self, p):
         p1 = Point(*p)
@@ -151,8 +155,8 @@ class BeamTypeDxf:
         self.add_stirrups()
         self.add_texts_dimension()
         self.add_dim_lines()
-        self.add_top_main_rebar()
-        self.add_bot_main_rebar()
+        self.add_top_main_rebars()
+        self.add_bot_main_rebars()
         self.add_axes_circle()
         self.add_axes_text()
         self.add_axes_dim()

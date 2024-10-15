@@ -78,6 +78,10 @@ class Rebar:
     @property
     def real_length(self):
         return self.length
+    
+    @property
+    def shape(self):
+        return "--"
 
     def __repr__(self):
         return f'{self.text}, L={self.real_length}'
@@ -117,6 +121,10 @@ class LRebar(Rebar):
             pts.append(add_pt)
         return pts
 
+    @property
+    def shape(self):
+        return "L"
+
 
 class URebar(Rebar):
     '''
@@ -141,3 +149,7 @@ class URebar(Rebar):
         p4 = tuple(Point(*p3).plusy(sign * self.extend_main_rebar))
 
         return [p1, p2, p3, p4]
+
+    @property
+    def shape(self):
+        return "U"

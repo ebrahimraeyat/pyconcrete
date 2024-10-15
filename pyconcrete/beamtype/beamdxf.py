@@ -40,7 +40,7 @@ class BeamDxf:
         y = 0
         p1 = (x, y)
         self.msp.add_text(f"{self.beam.width}X{self.beam.height}",
-                          dxfattribs={'color': 2, 'height': 7}).set_pos(p1, align=align)
+                          dxfattribs={'color': 2, 'height': 7}).set_placement(p1, align=align)
 
     @property
     def coordinates(self):

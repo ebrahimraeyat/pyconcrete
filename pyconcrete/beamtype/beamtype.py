@@ -27,10 +27,10 @@ class BeamType:
                  leader_dx=72,
                  leader_dy=30,
                  leader_offcet=5.5,
-                 # top_main_rebars: dict = None,
-                 # bot_main_rebars: dict = None,
                  top_add_rebars: list = [],
                  bot_add_rebars: list = [],
+                 top_main_rebars_prop: dict = {'diameter': 16, 'count': 3},
+                 bot_main_rebars_prop: dict = {'diameter': 16, 'count': 3},
                  uid: str = None,
                  ):
         self.spans_len = spans_len
@@ -55,6 +55,10 @@ class BeamType:
         self.leader_offcet = leader_offcet
         self._top_add_rebars = top_add_rebars
         self._bot_add_rebars = bot_add_rebars
+        self._top_main_rebars_prop = top_main_rebars_prop
+        self._bot_main_rebars_prop = bot_main_rebars_prop
+        self._top_main_rebars = None
+        self._bot_main_rebars = None
         self.uid = str(uuid.uuid4().int)
         self.spans_len_text = self._spans_len_text()
         self.beams_dimensions_text = self._beams_dimensions_text()
@@ -264,6 +268,13 @@ class BeamType:
         for rebar in self._top_add_rebars:
             tar_points.append(rebar.points())
         return tar_points
+    
+    @property
+    def top_main_rebars(self):
+        tar_points = []
+        for rebar in self._top_main_rebars:
+            tar_points.append(rebar.points())
+        return tar_points
 
     @top_add_rebars.setter
     def top_add_rebars(self):
@@ -275,6 +286,13 @@ class BeamType:
         for rebar in self._bot_add_rebars:
             bar_points.append(rebar.points())
         return bar_points
+    
+    @property
+    def bot_main_rebars(self):
+        bar_points = []
+        for rebar in self._bot_main_rebars:
+            bar_points.append(rebar.points())
+        return bar_points
 
     @bot_add_rebars.setter
     def bot_add_rebars(self):
@@ -283,6 +301,8 @@ class BeamType:
     def rebar_target_point(self, rebar):
         xs = self.axes_dist
         x1, x2, y = rebar.x1, rebar.x2, rebar.y
+        if rebar.shape == "U":
+            xs.insert(0, (x2 + x1) / 2)
         for x in xs:
             if x1 < x < x2:
                 return Point(x - self.leader_offcet, y)
@@ -305,6 +325,11 @@ class BeamType:
             lpts.append(self.rebar_leader_points(rebar))
         for rebar in self._bot_add_rebars:
             lpts.append(self.rebar_leader_points(rebar))
+        for rebar in self._top_main_rebars:
+            lpts.append(self.rebar_leader_points(rebar))
+        for rebar in self._bot_main_rebars:
+            lpts.append(self.rebar_leader_points(rebar))
+
         return lpts
 
     def _stirrups_dist(self):

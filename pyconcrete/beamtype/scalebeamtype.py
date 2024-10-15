@@ -1,6 +1,7 @@
 import copy
 from pyconcrete.beamtype.beamtype import BeamType
 from pyconcrete.beamtype import beam
+from pyconcrete import rebar
 
 
 class ScaleBeamType(BeamType):
@@ -40,21 +41,67 @@ class ScaleBeamType(BeamType):
                 stirrups_len.append(i)
         self.stirrups_len = stirrups_len
 
+    def scale_rebars(self, rebars):
+        scale_rebars = []
+        rebars = copy.deepcopy(rebars)
+        for r in rebars:
+            r.scale(self.horizontal, self.vertical)
+            scale_rebars.append(r)
+        return scale_rebars
+    
     def _scale_top_add_rebars(self):
         scale_rebars = []
         rebars = copy.deepcopy(self._top_add_rebars)
-        for rebar in rebars:
-            rebar.scale(self.horizontal, self.vertical)
-            scale_rebars.append(rebar)
+        for r in rebars:
+            r.scale(self.horizontal, self.vertical)
+            scale_rebars.append(r)
         self._top_add_rebars = scale_rebars
 
     def _scale_bot_add_rebars(self):
         scale_rebars = []
         rebars = copy.deepcopy(self._bot_add_rebars)
-        for rebar in rebars:
-            rebar.scale(self.horizontal, self.vertical)
-            scale_rebars.append(rebar)
+        for r in rebars:
+            r.scale(self.horizontal, self.vertical)
+            scale_rebars.append(r)
         self._bot_add_rebars = scale_rebars
+
+    def _scale_and_add_top_main_rebar(self):
+        pts = self.top_main_rebar_points
+        p2, p3 = pts[1:-1]
+        x1, x2 = p2[0] * self.horizontal, p3[0] * self.horizontal
+        y = p2[1] * self.vertical
+        length = abs(x2 - x1)
+        diameter = self._top_main_rebars_prop.get('diameter', 16)
+        count = self._top_main_rebars_prop.get('count', 3)
+        insert = (x1, y)
+        top_rebar = rebar.URebar(
+        length,
+        diameter,
+        count,
+        insert,
+        v_align='top',
+        )
+        top_rebar = self.scale_rebars([top_rebar])
+        self._top_main_rebars = top_rebar
+    
+    def _scale_and_add_bot_main_rebar(self):
+        pts = self.bot_main_rebar_points
+        p2, p3 = pts[1:-1]
+        x1, x2 = p2[0] * self.horizontal, p3[0] * self.horizontal
+        y = p2[1] * self.vertical
+        length = abs(x2 - x1)
+        diameter = self._bot_main_rebars_prop.get('diameter', 16)
+        count = self._bot_main_rebars_prop.get('count', 3)
+        insert = (x1, y)
+        bot_rebar = rebar.URebar(
+        length,
+        diameter,
+        count,
+        insert,
+        v_align='bot',
+        )
+        bot_rebar = self.scale_rebars([bot_rebar])
+        self._bot_main_rebars = bot_rebar
 
     def _scale_constant(self):
         self.extend_edge_len /= self.vertical
@@ -84,6 +131,8 @@ class ScaleBeamType(BeamType):
         self._scale_constant()
         self._scale_top_add_rebars()
         self._scale_bot_add_rebars()
+        self._scale_and_add_top_main_rebar()
+        self._scale_and_add_bot_main_rebar()
         self._scale_stirrup_at()
 
     @property
