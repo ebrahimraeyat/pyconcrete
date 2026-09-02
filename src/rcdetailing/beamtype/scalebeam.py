@@ -1,8 +1,8 @@
 # from dataclasses import dataclass
-from pyconcrete.point import Point
+from rcdetailing.point import Point
 import copy
 
-from pyconcrete.beamtype.beam import Beam
+from rcdetailing.beamtype.beam import Beam
 
 
 class ScaleBeam(Beam):

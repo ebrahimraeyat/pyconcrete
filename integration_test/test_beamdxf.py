@@ -1,5 +1,5 @@
 # import ezdxf
-# from pyconcrete.beamtype import beam, beamdxf
+# from rcdetailing.beamtype import beam, beamdxf
 
 
 # b1 = beam.Beam(485, 40, 45, dict(bot=dict(left=50, right=40), top=dict(left=40, right=35)), [30, 460])

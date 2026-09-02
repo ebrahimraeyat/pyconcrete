@@ -1,5 +1,5 @@
 # from dataclasses import dataclass
-from pyconcrete.point import Point
+from rcdetailing.point import Point
 # from dynaconf import settings
 
 

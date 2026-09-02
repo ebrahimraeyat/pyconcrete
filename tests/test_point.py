@@ -1,5 +1,5 @@
 import pytest
-from pyconcrete import point as p
+from rcdetailing import point as p
 
 
 @pytest.fixture

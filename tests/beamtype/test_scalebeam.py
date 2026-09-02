@@ -1,5 +1,5 @@
 # import pytest
-# from pyconcrete.beamtype import scalebeam as sb
+# from rcdetailing.beamtype import scalebeam as sb
 
 # horizontal = 100
 # vertical = 20

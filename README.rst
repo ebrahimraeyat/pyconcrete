@@ -1,10 +1,10 @@
 ===============================
-pyconcrete
+rcdetailing
 ===============================
 
 
-.. image:: https://img.shields.io/pypi/v/pyconcrete.svg
-        :target: https://pypi.python.org/pypi/pyconcrete
+.. image:: https://img.shields.io/pypi/v/rcdetailing.svg
+        :target: https://pypi.python.org/pypi/rcdetailing
 
 .. image:: https://img.shields.io/travis/ebrahimraeyat/pyconcrete.svg
         :target: https://travis-ci.org/ebrahimraeyat/pyconcrete

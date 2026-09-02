@@ -1,7 +1,7 @@
 import copy
-from pyconcrete.beamtype.beamtype import BeamType
-from pyconcrete.beamtype import beam
-from pyconcrete import rebar
+from rcdetailing.beamtype.beamtype import BeamType
+from rcdetailing.beamtype import beam
+from rcdetailing import rebar
 
 
 class ScaleBeamType(BeamType):

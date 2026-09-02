@@ -1,5 +1,5 @@
 import pytest
-from pyconcrete.beamtype import beam as b
+from rcdetailing.beamtype import beam as b
 
 
 @pytest.fixture

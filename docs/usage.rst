@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use pyconcrete in a project::
+To use rcdetailing in a project::
 
-    import pyconcrete
+    import rcdetailing

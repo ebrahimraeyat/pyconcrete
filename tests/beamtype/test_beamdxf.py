@@ -1,6 +1,6 @@
 from unittest.mock import Mock, patch
 import pytest
-from pyconcrete.beamtype import beamdxf as bdxf
+from rcdetailing.beamtype import beamdxf as bdxf
 import ezdxf
 
 
@@ -80,6 +80,6 @@ def test_beam_text_dimensions(beam1):
         msp_beam = bdxf.BeamDxf(beam, block)
         msp_beam._dimensions_text_to_dxf()
         text = msp_beam.msp.query('TEXT')[0]
-        align, pos = text.get_pos()[0:2]
-        assert align == 'BOTTOM_CENTER'
+        align, pos = text.get_placement()[0:2]
+        assert align == ezdxf.enums.TextEntityAlignment.BOTTOM_CENTER
         assert pos == (223.75, 0)

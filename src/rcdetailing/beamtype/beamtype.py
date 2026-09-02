@@ -1,9 +1,9 @@
 # from dataclasses import dataclass, field
 import uuid
 
-from pyconcrete.beamtype import beam
-from pyconcrete.point import Point
-from pyconcrete.rebar import Rebar
+from rcdetailing.beamtype import beam
+from rcdetailing.point import Point
+from rcdetailing.rebar import Rebar
 
 
 class BeamType:

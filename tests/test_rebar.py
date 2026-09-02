@@ -1,7 +1,7 @@
 import pytest
 import copy
 
-from pyconcrete import rebar
+from rcdetailing import rebar
 
 
 @pytest.fixture

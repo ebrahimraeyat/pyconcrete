@@ -1,4 +1,4 @@
-from pyconcrete.beamtype.beam import Beam
+from rcdetailing.beamtype.beam import Beam
 import ezdxf
 
 
@@ -35,7 +35,7 @@ class BeamDxf:
         self.msp.add_lwpolyline(right_points, dxfattribs={'color': 4})
 
     def _dimensions_text_to_dxf(self):
-        align = 'BOTTOM_CENTER'
+        align = ezdxf.enums.TextEntityAlignment.BOTTOM_CENTER
         x = (self.coordinates['top']['right'][0] - self.coordinates['top']['left'][0]) / 2
         y = 0
         p1 = (x, y)

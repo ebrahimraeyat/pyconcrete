@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rcdetailing"
+dynamic = ["version"]
+description = "Python package for drawing reinforced-concrete beam and rebar detailing to DXF."
+readme = "README.rst"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Ebrahim Raeyat Roknabadi", email = "ebe79442114@yahoo.com" },
+]
+keywords = ["rcdetailing", "concrete", "rebar", "dxf", "structural"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "ezdxf",
+    "numpy",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov"]
+dev = ["flake8", "punch.py"]
+
+[project.urls]
+Homepage = "https://github.com/ebrahimraeyat/pyconcrete"
+Documentation = "https://pyconcrete.readthedocs.io"
+
+[tool.hatch.version]
+path = "src/rcdetailing/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rcdetailing"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/integration_test",
+    "/docs",
+    "/AUTHORS.rst",
+    "/CONTRIBUTING.rst",
+    "/HISTORY.rst",
+    "/LICENSE",
+    "/README.rst",
+]

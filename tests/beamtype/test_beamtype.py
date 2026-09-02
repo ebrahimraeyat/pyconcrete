@@ -1,10 +1,10 @@
 import pytest
 import numpy as np
 
-from pyconcrete.beamtype import beamtype as bt
-from pyconcrete.beamtype import beam as b
-from pyconcrete import rebar
-from pyconcrete.point import Point
+from rcdetailing.beamtype import beamtype as bt
+from rcdetailing.beamtype import beam as b
+from rcdetailing import rebar
+from rcdetailing.point import Point
 
 
 @pytest.fixture

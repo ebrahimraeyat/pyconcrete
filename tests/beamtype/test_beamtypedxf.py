@@ -1,9 +1,10 @@
 import pytest
 
 import ezdxf
+import ezdxf.document
 
-from pyconcrete.beamtype import beamtypedxf as btdxf
-from pyconcrete.beamtype import beamtype as bt
+from rcdetailing.beamtype import beamtypedxf as btdxf
+from rcdetailing.beamtype import beamtype as bt
 from .test_beamtype import bt1
 
 
@@ -19,7 +20,7 @@ def test_beamtype_type(bt1):
 
 
 def test_dwg_type(btdxf1):
-    assert isinstance(btdxf1.dwg, ezdxf.drawing.Drawing)
+    assert isinstance(btdxf1.dwg, ezdxf.document.Drawing)
 
 
 def test_add_top_polylines(btdxf1):

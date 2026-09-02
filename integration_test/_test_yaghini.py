@@ -1,7 +1,7 @@
 import ezdxf
 
-from pyconcrete.beamtype import beamtype, scalebeamtype, beamtypedxf
-from pyconcrete import rebar
+from rcdetailing.beamtype import beamtype, scalebeamtype, beamtypedxf
+from rcdetailing import rebar
 
 # y2 = -3.4
 # left_rebar = rebar.LRebar(length=132.2, insert=(-11.25, y2))

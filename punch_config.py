@@ -6,6 +6,6 @@ GLOBALS = {
 }
 
 
-FILES = ["setup.py", "pyconcrete/__init__.py"]
+FILES = ["src/rcdetailing/__init__.py"]
 
 VERSION = ['major', 'minor', 'patch']

@@ -1,7 +1,7 @@
 import ezdxf
 
-from pyconcrete.beamtype import beamtype as bt
-from pyconcrete.point import Point
+from rcdetailing.beamtype import beamtype as bt
+from rcdetailing.point import Point
 
 
 

@@ -1,4 +1,4 @@
-# pyconcrete
+# rcdetailing
 python module for drawing concrete plan details.
 
 it aims to draw such a beam and columns at the end.
@@ -23,8 +23,8 @@ with ezdxf python package for example.
 ```python
 import ezdxf
 
-from pyconcrete.beamtype import beamtype, scalebeamtype, beamtypedxf
-from pyconcrete import rebar
+from rcdetailing.beamtype import beamtype, scalebeamtype, beamtypedxf
+from rcdetailing import rebar
 
 y2 = -3.4
 left_rebar = rebar.LRebar(count=2, length=132.2, insert=(-11.25, y2))
@@ -59,7 +59,7 @@ prop5 = dict(spans_len=[295, 540],
 props = (prop5,)
 
 # scaled beamtype h=75, v=20
-new_dwg = ezdxf.readfile('pyconcrete/TEMPLATE.dxf')
+new_dwg = ezdxf.readfile('src/rcdetailing/TEMPLATE.dxf')
 msp = new_dwg.modelspace()
 h = 75
 v = 20

@@ -1,4 +1,4 @@
-Welcome to pyconcrete's documentation!
+Welcome to rcdetailing's documentation!
 ======================================
 
 Contents:
